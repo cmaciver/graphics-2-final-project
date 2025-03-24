@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bf1bemm8wxd61"]
+
+[resource]
+disable_ambient_light = true
+metallic_specular = 1.0
+roughness = 0.5

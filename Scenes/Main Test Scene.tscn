@@ -1,0 +1,103 @@
+[gd_scene load_steps=4 format=3 uid="uid://cb034agyt6gff"]
+
+[ext_resource type="Script" uid="uid://coycwuu5yfcwe" path="res://Scripts/mesh_generator.gd" id="1_nksof"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_nksof"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_06p57"]
+
+[node name="Node" type="Node"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 7.5)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 7.5, -2.5)
+light_energy = 4.0
+omni_range = 15.0
+
+[node name="Terrain Generation" type="StaticBody3D" parent="."]
+script = ExtResource("1_nksof")
+subdivisions = 5
+size = Vector3(10, 1, 10)
+
+[node name="Ball 1" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 1"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 1"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 2" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, 2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 2"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 2"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 3" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, -2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 3"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 3"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 4" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, 2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 4"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 4"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 5" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, -2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 5"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 5"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 6" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 6"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 6"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 7" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 7"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 7"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 8" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 8"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 8"]
+shape = SubResource("SphereShape3D_06p57")
+
+[node name="Ball 9" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball 9"]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball 9"]
+shape = SubResource("SphereShape3D_06p57")
