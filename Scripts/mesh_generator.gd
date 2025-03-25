@@ -7,52 +7,53 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 	set(value):
 		if subdivisions != value:
 			subdivisions = value
-			if Engine.is_editor_hint():
+			if Engine.is_editor_hint() && is_inside_tree():
 				generate_mesh()
 
 @export var size := Vector3.ONE :
 	set(value):
 		if size != value:
 			size = value
-			if Engine.is_editor_hint():
+			if Engine.is_editor_hint() && is_inside_tree():
 				generate_mesh()
 
-@export var diagonalType := DiagonalType.SMOOTHING :
+@export var diagonal_type := DiagonalType.SMOOTHING :
 	set(value):
-		if diagonalType != value:
-			diagonalType = value
-			if Engine.is_editor_hint():
+		if diagonal_type != value:
+			diagonal_type = value
+			if Engine.is_editor_hint() && is_inside_tree():
 				generate_mesh()
 
-var meshInstance: MeshInstance3D
-var collisionShape: CollisionShape3D
-var concavePolygon: ConcavePolygonShape3D
+var mesh_instance: MeshInstance3D
+var collision_shape: CollisionShape3D
+var concave_polygon: ConcavePolygonShape3D
 
 func heightmap(x: float, z: float) -> float:
 	return sin(PI / 10 * x * z) / 2
 
-func posFromMap(x: float, z:float) -> Vector3:
+func pos_from_map(x: float, z:float) -> Vector3:
 	return Vector3(x, heightmap(x, z), z)
 
-func _ready() -> void:
-	generate_mesh()
+#func _ready() -> void:
+	#generate_mesh()
 	
 func generate_mesh() -> void:
 	print("Started generating mesh with ", subdivisions, " subdivision", "." if subdivisions == 1 else "s.")
-	var startTime := Time.get_unix_time_from_system()
+	var start_time := Time.get_unix_time_from_system()
 	
-	if meshInstance:
-		meshInstance.queue_free()
+	var children = get_children()
+	for child in children:
+		child.queue_free()
 	
-	if collisionShape:
-		collisionShape.queue_free()
+	mesh_instance = MeshInstance3D.new()
+	collision_shape = CollisionShape3D.new()
+	add_child(mesh_instance)
+	add_child(collision_shape)
+	if Engine.is_editor_hint():
+		mesh_instance.set_owner(get_tree().get_edited_scene_root())
+		collision_shape.set_owner(get_tree().get_edited_scene_root())
 	
-	meshInstance = MeshInstance3D.new()
-	collisionShape = CollisionShape3D.new()
-	add_child(meshInstance)
-	add_child(collisionShape)
-	
-	meshInstance.mesh = ArrayMesh.new()
+	mesh_instance.mesh = ArrayMesh.new()
 	var surface_array = []
 	surface_array.resize(Mesh.ARRAY_MAX)
 
@@ -73,21 +74,21 @@ func generate_mesh() -> void:
 			var y := size.y * heightmap(x, z)
 			verts.append(Vector3(x, y, z))
 			#uvs.append(Vector2((x - initial.x) / size.x, (z - initial.z) / size.z))
-			normals.append((posFromMap(x, z + cell_size.z) - posFromMap(x, z - cell_size.z)).cross(
-							posFromMap(x + cell_size.x, z) - posFromMap(x - cell_size.x, z)).normalized())
+			normals.append((pos_from_map(x, z + cell_size.z) - pos_from_map(x, z - cell_size.z)).cross(
+							pos_from_map(x + cell_size.x, z) - pos_from_map(x - cell_size.x, z)).normalized())
 			if x_index > 0 && z_index > 0:
 				var vertex_index := x_index * iterations + z_index
-				var primaryDiagonal := false
-				match diagonalType:
+				var primary_diagonal := false
+				match diagonal_type:
 					DiagonalType.SIMPLE:
-						primaryDiagonal = true
+						primary_diagonal = true
 					DiagonalType.ALTERNATING:
-						primaryDiagonal = (x_index + z_index) % 2 == 0
+						primary_diagonal = (x_index + z_index) % 2 == 0
 					DiagonalType.SMOOTHING:
-						primaryDiagonal = (abs(heightmap(x, z) - heightmap(x - cell_size.x, z - cell_size.z)) >
+						primary_diagonal = (abs(heightmap(x, z) - heightmap(x - cell_size.x, z - cell_size.z)) >
 										   abs(heightmap(x - cell_size.x, z) - heightmap(x, z - cell_size.z)))
 				
-				if primaryDiagonal:
+				if primary_diagonal:
 					indices.append_array(PackedInt32Array([
 						vertex_index - iterations - 1, vertex_index - iterations, vertex_index - 1,
 						vertex_index - iterations, vertex_index, vertex_index - 1
@@ -109,8 +110,8 @@ func generate_mesh() -> void:
 
 	# Create mesh surface from mesh array.
 	# No blendshapes, lods, or compression used.
-	meshInstance.mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
-	meshInstance.mesh.surface_set_material(0, preload("res://Materials/basic.tres"))
+	mesh_instance.mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	mesh_instance.mesh.surface_set_material(0, preload("res://Materials/basic.tres"))
 	
 	# Create Packed Vector 3 Array of faces for Concave Polygon 3D 
 	var faces := PackedVector3Array()
@@ -119,11 +120,11 @@ func generate_mesh() -> void:
 		faces.append(verts[index])
 	
 	# Create the Concave Polygon
-	concavePolygon = ConcavePolygonShape3D.new()
+	concave_polygon = ConcavePolygonShape3D.new()
 	# Set the faces array of the Concave Polygon
-	concavePolygon.set_faces(faces)
+	concave_polygon.set_faces(faces)
 	# Set the Collision Shape to the Concave Polygon
-	collisionShape.shape = concavePolygon;
+	collision_shape.shape = concave_polygon;
 	
-	var duration := Time.get_unix_time_from_system() - startTime;
-	print("Completed in ", "%0.3f" % duration, " seconds.")
+	var duration := Time.get_unix_time_from_system() - start_time;
+	print("Completed in ", "%0.3f" % duration, " seconds.\n")
