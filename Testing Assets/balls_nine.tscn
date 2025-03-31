@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdnx7wtytvt0n"]
+
+[ext_resource type="PackedScene" uid="uid://dop0ecj7r7gpl" path="res://Testing Assets/ball.tscn" id="1_mxqlc"]
+
+[node name="Nine Balls" type="Node3D"]
+
+[node name="Ball 1" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+
+[node name="Ball 2" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, 0)
+
+[node name="Ball 3" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, 2.5)
+
+[node name="Ball 4" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 2.5)
+
+[node name="Ball 5" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, 0)
+
+[node name="Ball 6" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, 2.5)
+
+[node name="Ball 7" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, -2.5)
+
+[node name="Ball 8" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2.5)
+
+[node name="Ball 9" parent="." instance=ExtResource("1_mxqlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, -2.5)

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dop0ecj7r7gpl"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_nksof"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_06p57"]
+
+[node name="Ball 1" type="RigidBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_nksof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_06p57")
