@@ -50,34 +50,34 @@ shape = SubResource("ConcavePolygonShape3D_8f2mw")
 script = ExtResource("3_8f2mw")
 
 [node name="Foliage 1" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.39718, -0.06173, -0.115976)
+transform = Transform3D(0.572305, -0.0596653, 0.817867, 0.186687, 0.980641, -0.0590946, -0.798508, 0.186505, 0.572364, 4.46358, -0.308906, -1.76544)
 
 [node name="Foliage 2" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.06232, -0.377115, 4.25375)
+transform = Transform3D(-0.835749, 0.0820358, -0.542949, 0.122296, 0.991751, -0.0384005, 0.53532, -0.0984936, -0.838887, -1.12395, 0.499177, -4.61108)
 
 [node name="Foliage 3" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.27926, -0.339033, 0.723277)
+transform = Transform3D(-0.405683, -0.2154, -0.888271, 0.0440027, 0.966105, -0.25437, 0.912954, -0.14228, -0.382454, -0.0302706, -0.00270102, 0.568054)
 
 [node name="Foliage 4" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.09399, 0.457984, -3.01541)
+transform = Transform3D(-0.606305, 0.231133, 0.760902, 0.135321, 0.972862, -0.187691, -0.783634, -0.0108323, -0.621128, 1.90754, -0.17784, -0.606806)
 
 [node name="Foliage 5" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.73701, 0.416056, 1.83872)
+transform = Transform3D(0.82124, 0.0385603, 0.569279, 0.068147, 0.983944, -0.164956, -0.566499, 0.174263, 0.805426, 3.88041, 0.450558, 0.920653)
 
 [node name="Foliage 6" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.296947, 0.191489, 4.21292)
+transform = Transform3D(-0.818551, 0.225087, 0.528498, 0.198106, 0.974204, -0.10808, -0.539192, 0.0162296, -0.842026, -0.865133, -0.445361, 4.04332)
 
 [node name="Foliage 7" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.48669, 0.0824343, 3.8094)
+transform = Transform3D(0.870275, 0.0281783, 0.49176, 0.0856475, 0.974497, -0.207411, -0.485063, 0.222623, 0.845667, 1.74007, 0.294031, 4.59688)
 
 [node name="Foliage 8" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.39605, -0.267416, 0.528923)
+transform = Transform3D(-0.0373624, 0.122174, 0.991805, 0.103219, 0.987661, -0.117775, -0.993957, 0.0979729, -0.049512, -2.77762, -0.419296, -4.7401)
 
 [node name="Foliage 9" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.92225, 0.49858, -3.76317)
+transform = Transform3D(0.658449, -0.274448, -0.700802, 0.181977, 0.96157, -0.20559, 0.730294, 0.00784054, 0.683088, -3.8342, -0.0137951, 2.5852)
 
 [node name="Foliage 10" type="Node3D" parent="Foliage Generator" instance=ExtResource("4_8v6sd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9849, -0.138283, 4.19105)
+transform = Transform3D(-0.896743, 0.116008, 0.427076, 0.0578011, 0.987467, -0.146862, -0.43876, -0.107012, -0.89221, -0.562868, -0.225817, 2.64997)
 
 [node name="Ball 1" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)

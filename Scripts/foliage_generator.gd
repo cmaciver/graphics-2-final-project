@@ -12,6 +12,7 @@ var rng = RandomNumberGenerator.new()
 func _ready() -> void:
 	terrain = $"../Terrain Generation"
 	rng.seed = Time.get_ticks_usec()
+	scatter_points()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -32,6 +33,12 @@ func scatter_points(count = 10):
 			new_foliage.set_owner(get_tree().get_edited_scene_root())
 		
 		new_foliage.position = select_random_point()
+		
+		# and rotate IN RADIANS
+		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+		
+		new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+		new_foliage.rotation.z = rng.randf_range(0, PI / 12)
 		
 	
 	
