@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=3 uid="uid://cywbiwqeewpnj"]
+
+[ext_resource type="Texture2D" uid="uid://da7efiqhejasn" path="res://Testing Assets/image/Rainbow-gradient-fully-saturated.svg.png" id="1_tyq1g"]
+[ext_resource type="Texture2D" uid="uid://63yaspkyjnja" path="res://Testing Assets/image/destaque.jpg" id="2_ieeo0"]
+[ext_resource type="Texture2D" uid="uid://duybc5k1fyjyt" path="res://Testing Assets/image/fine-art-nature-photography.jpg" id="3_uxsy1"]
+[ext_resource type="PackedScene" uid="uid://de4ilx73lu6b7" path="res://Testing Assets/test scenes/post_process_shader.tscn" id="4_tyq1g"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tyq1g"]
+
+[sub_resource type="Curve" id="Curve_tyq1g"]
+_data = [Vector2(0.00938968, 0), 0.0, 1.02568, 0, 0, Vector2(1, 1), 1.34256, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_uxsy1"]
+curve = SubResource("Curve_tyq1g")
+
+[node name="ShaderTest" type="Node2D"]
+material = SubResource("ShaderMaterial_tyq1g")
+
+[node name="Rainbow" type="Sprite2D" parent="."]
+position = Vector2(961.168, 291.808)
+scale = Vector2(0.974773, 0.279109)
+texture = ExtResource("1_tyq1g")
+
+[node name="BlackAndWhite" type="Sprite2D" parent="."]
+position = Vector2(1004, 199)
+scale = Vector2(3.46484, 197.5)
+texture = SubResource("CurveTexture_uxsy1")
+
+[node name="Woman" type="Sprite2D" parent="."]
+position = Vector2(490, 704)
+scale = Vector2(1.09952, 1.18982)
+texture = ExtResource("2_ieeo0")
+
+[node name="Mountain" type="Sprite2D" parent="."]
+position = Vector2(1481, 761)
+scale = Vector2(0.724777, 0.646766)
+texture = ExtResource("3_uxsy1")
+
+[node name="CanvasLayer" parent="." instance=ExtResource("4_tyq1g")]

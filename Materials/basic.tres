@@ -2,5 +2,6 @@
 
 [resource]
 disable_ambient_light = true
+albedo_color = Color(1, 0.08, 0.08, 1)
 metallic_specular = 1.0
 roughness = 0.5

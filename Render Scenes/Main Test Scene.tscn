@@ -1,53 +1,54 @@
-[gd_scene load_steps=5 format=3 uid="uid://cb034agyt6gff"]
+[gd_scene load_steps=6 format=3 uid="uid://cb034agyt6gff"]
 
 [ext_resource type="PackedScene" uid="uid://cewqwmowu52ym" path="res://Features/terrain_generator.tscn" id="1_o1tgq"]
 [ext_resource type="PackedScene" uid="uid://brwbresdoh5v3" path="res://Features/foliage_generator.tscn" id="3_0bpka"]
 [ext_resource type="PackedScene" uid="uid://dop0ecj7r7gpl" path="res://Testing Assets/ball.tscn" id="3_byirt"]
 [ext_resource type="PackedScene" uid="uid://dd0tfk6skp7j6" path="res://Testing Assets/test_foliage.tscn" id="4_gnrft"]
+[ext_resource type="PackedScene" uid="uid://de4ilx73lu6b7" path="res://Testing Assets/test scenes/post_process_shader.tscn" id="5_byirt"]
 
 [node name="Node" type="Node"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 7.5)
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 7.5, -2.5)
-light_energy = 4.0
-omni_range = 15.0
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.892685, 0.162571, 0.420339, 0.375069, 0.785095, 0.492898, -0.249875, 0.597659, -0.761818, 7.86427, 5.64201, 8.29437)
+shadow_enabled = true
+sky_mode = 1
 
 [node name="TerrainGenerator" parent="." instance=ExtResource("1_o1tgq")]
 
 [node name="FoliageGenerator" parent="." instance=ExtResource("3_0bpka")]
 
-[node name="@Node3D@23962" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(0.970476, -0.22674, -0.0822476, 0.224281, 0.973779, -0.0381171, 0.0887336, 0.0185451, 0.995883, 2.40973, 0.121186, -4.47322)
+[node name="@Node3D@43279" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.807435, -0.10427, 0.580669, 0.233182, 0.960517, -0.151766, -0.541918, 0.257942, 0.799869, 0.651917, -0.03691, -0.360767)
 
-[node name="@Node3D@23963" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.952146, 0.114387, -0.283433, 0.166078, 0.97211, -0.16559, 0.256586, -0.204738, -0.944588, 3.71904, -0.478456, -1.09227)
+[node name="@Node3D@43280" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.892288, -0.0985738, -0.440574, 0.103899, 0.994514, -0.0120876, 0.439349, -0.0349895, 0.897635, 4.03757, 0.488547, -3.88416)
 
-[node name="@Node3D@23964" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.48877, 0.0192684, -0.8722, 0.231067, 0.966911, -0.108126, 0.841256, -0.254385, -0.47705, -1.14646, -0.489716, 4.92534)
+[node name="@Node3D@43281" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.977732, -0.029182, 0.207819, 0.0575312, 0.989618, -0.131706, -0.201818, 0.14073, 0.96926, -1.1408, -0.491662, 3.87263)
 
-[node name="@Node3D@23965" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.13117, -0.11938, -0.984146, 0.214005, 0.965907, -0.145691, 0.967986, -0.229723, -0.10115, 0.967734, -0.435006, -3.47088)
+[node name="@Node3D@43282" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(-0.997169, 0.0405848, 0.0632984, 0.034791, 0.995326, -0.0900899, -0.0666588, -0.0876326, -0.99392, 2.21415, -0.357957, -3.36928)
 
-[node name="@Node3D@23966" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.731068, 0.0997356, 0.674976, 0.0937951, 0.994557, -0.0453678, -0.675827, 0.0301426, -0.736444, 3.29151, -0.426219, -2.05111)
+[node name="@Node3D@43283" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.861987, -0.213826, -0.459626, 0.132838, 0.97028, -0.202265, 0.489216, 0.113294, 0.864773, 1.77937, 0.23382, 0.87051)
 
-[node name="@Node3D@23967" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.938256, 0.244421, 0.244814, 0.227908, 0.969124, -0.0941056, -0.260257, -0.0325001, -0.964992, -1.11962, -0.476181, 3.58471)
+[node name="@Node3D@43284" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.359188, -0.290322, -0.886959, 0.232823, 0.948209, -0.216085, 0.903757, -0.12889, 0.408179, -4.3458, -0.136885, 4.80527)
 
-[node name="@Node3D@23968" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(-0.937288, 0.201057, 0.284723, 0.196132, 0.979497, -0.0460183, -0.288138, 0.012711, -0.957505, -1.70552, -0.011714, 0.0437288)
+[node name="@Node3D@43285" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(-0.783141, 0.206419, 0.586584, 0.190499, 0.977583, -0.0896783, -0.591946, 0.0415127, -0.804908, -2.31611, 0.463509, -2.6871)
 
-[node name="@Node3D@23969" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(0.806968, -0.133183, -0.575382, 0.0450782, 0.985289, -0.164843, 0.588872, 0.107086, 0.801101, 2.07616, -0.10192, -0.314726)
+[node name="@Node3D@43286" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(-0.980097, 0.192997, -0.0464883, 0.198059, 0.966541, -0.163004, 0.0134736, -0.168967, -0.98553, -4.93928, -0.104624, -2.16044)
 
-[node name="@Node3D@23970" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(0.716012, -0.0387043, 0.697015, 0.244785, 0.948986, -0.198761, -0.653764, 0.312934, 0.688959, -1.70956, -0.39725, 1.7096)
+[node name="@Node3D@43287" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.979426, -0.0619707, 0.192052, 0.106736, 0.966749, -0.232385, -0.171265, 0.248103, 0.953474, -4.38427, 0.202871, -1.97756)
 
-[node name="@Node3D@23971" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
-transform = Transform3D(0.619634, -0.172531, -0.765694, 0.226864, 0.973271, -0.0357148, 0.75139, -0.151579, 0.642213, -1.13797, -0.0951891, 0.535789)
+[node name="@Node3D@43288" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(-0.909271, 0.234979, 0.343528, 0.2256, 0.971869, -0.0676434, -0.349759, 0.0159938, -0.936703, -3.915, 0.125723, 4.9019)
 
 [node name="Ball 1" parent="." instance=ExtResource("3_byirt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
@@ -75,3 +76,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2.5)
 
 [node name="Ball 9" parent="." instance=ExtResource("3_byirt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 3, -2.5)
+
+[node name="CanvasLayer" parent="." instance=ExtResource("5_byirt")]
