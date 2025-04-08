@@ -2,6 +2,9 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i7vln"]
 albedo_color = Color(0.95, 0, 1, 1)
+roughness = 0.0
+clearcoat_enabled = true
+clearcoat_roughness = 1.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_nksof"]
 material = SubResource("StandardMaterial3D_i7vln")

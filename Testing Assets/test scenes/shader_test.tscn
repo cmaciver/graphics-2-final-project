@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cywbiwqeewpnj"]
+[gd_scene load_steps=9 format=3 uid="uid://cywbiwqeewpnj"]
 
 [ext_resource type="Texture2D" uid="uid://da7efiqhejasn" path="res://Testing Assets/image/Rainbow-gradient-fully-saturated.svg.png" id="1_tyq1g"]
 [ext_resource type="Texture2D" uid="uid://63yaspkyjnja" path="res://Testing Assets/image/destaque.jpg" id="2_ieeo0"]
 [ext_resource type="Texture2D" uid="uid://duybc5k1fyjyt" path="res://Testing Assets/image/fine-art-nature-photography.jpg" id="3_uxsy1"]
 [ext_resource type="PackedScene" uid="uid://de4ilx73lu6b7" path="res://Testing Assets/test scenes/post_process_shader.tscn" id="4_tyq1g"]
+[ext_resource type="Texture2D" uid="uid://pt50orwker4y" path="res://Testing Assets/image/rainbow_splash.jpg" id="5_uxsy1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tyq1g"]
 
@@ -33,8 +34,12 @@ scale = Vector2(1.09952, 1.18982)
 texture = ExtResource("2_ieeo0")
 
 [node name="Mountain" type="Sprite2D" parent="."]
-position = Vector2(1481, 761)
+position = Vector2(1549, 726)
 scale = Vector2(0.724777, 0.646766)
 texture = ExtResource("3_uxsy1")
 
 [node name="CanvasLayer" parent="." instance=ExtResource("4_tyq1g")]
+
+[node name="RainbowSplash" type="Sprite2D" parent="."]
+position = Vector2(1678, 213)
+texture = ExtResource("5_uxsy1")
