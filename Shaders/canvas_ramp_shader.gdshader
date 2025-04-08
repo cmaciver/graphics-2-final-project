@@ -5,35 +5,33 @@ uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_n
 //uniform vec4 color_ramp;
 uniform int light_divisions = 10;
 
-float ramp_value(float value, float in_start, float in_end, float out_start, float out_end) {
-	return out_start + ((out_end - out_start) / (in_end - in_start)) * (value - in_start);
+// float in_start, float in_end, float out_start, float out_end
+uniform vec4 ramp_1 = vec4(0.0, 0.35, 0.2, 0.35);
+uniform vec4 ramp_2 = vec4(0.3, 0.5, 0.37, 0.4875);
+uniform vec4 ramp_3 = vec4(0.5, 0.65, 0.5215, 0.65);
+uniform vec4 ramp_4 = vec4(0.65, 0.8, 0.7, 0.8);
+uniform vec4 ramp_5 = vec4(0.8, 0.97, 0.85, 0.97);
+uniform vec4 ramp_6 = vec4(0.97, 1.0, 0.99, 1.0);
+
+float ramp_value(float value, vec4 ramp) {
+	if (ramp.x <= value && value < ramp.y) {
+		return ramp.z + ((ramp.w - ramp.z) / (ramp.y - ramp.x)) * (value - ramp.x);
+	} else {
+		return value;
+	}
 }
 
 float luminance_multiramp(float input) {
 	float val = input;
 	//val = sqrt(val);
-	
-	//val = floor(input * float(light_divisions)) / float(light_divisions);
-	if (0.0 <= val && val < 0.35) {
-		val = ramp_value(val, 0.0, 0.35, 0.2, 0.35);
-		
-	} else if (0.35 <= val && val < 0.5) {
-		val = ramp_value(val, 0.3, 0.5, 0.37, 0.4875);
-		
-	} else if (0.5 <= val && val < 0.65) {
-		val = ramp_value(val, 0.5, 0.65, 0.5215, 0.65);
-		
-	} else if (0.65 <= val && val < 0.8) {
-		val = ramp_value(val, 0.65, 0.8, 0.7, 0.8);
-		
-	} else if (0.8 <= val && val < 0.97) {
-		val = ramp_value(val, 0.8, 0.97, 0.85, 0.97);
-		
-	} else if (0.97 <= val) {
-		val = ramp_value(val, 0.97, 1.0, 0.99, 1.0);
-		
-	}
-	
+
+	val = ramp_value(val, ramp_1);
+	val = ramp_value(val, ramp_2);
+	val = ramp_value(val, ramp_3);
+	val = ramp_value(val, ramp_4);
+	val = ramp_value(val, ramp_5);
+	val = ramp_value(val, ramp_6);
+
 	return val;
 }
 
@@ -53,7 +51,7 @@ void fragment() {
 	vec3 oklab_color = oklab_from_linear(linear_color);
 	oklab_color = oklch_from_oklab(oklab_color);
 	//oklab_color.z += 1.7;
-	
+
 
 	// do cell shading on just the luminance
 	oklab_color.x = luminance_multiramp(oklab_color.x);
