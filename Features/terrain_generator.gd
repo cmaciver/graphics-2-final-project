@@ -34,26 +34,33 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 var mesh_instance: MeshInstance3D
 var collision_shape: CollisionShape3D
 var concave_polygon: ConcavePolygonShape3D
+var height_noise: FastNoiseLite = FastNoiseLite.new()
 
+@export var scale_factor = 2.5
 
 func heightmap(x: float, z: float) -> float:
-	return sin(PI / 10 * x * z) / 2
-
+	return (height_noise.get_noise_2d(x * scale_factor, z * scale_factor) * scale_factor)
 
 func pos_from_map(x: float, z:float) -> Vector3:
 	return Vector3(x, heightmap(x, z), z)
 
 
-#func _ready() -> void:
-	#generate_mesh()
+func _ready() -> void:
+	generate_mesh()
 
 
 func generate_mesh() -> void:
 	print("Started generating mesh with ", subdivisions, " subdivision", "." if subdivisions == 1 else "s.")
 	var start_time := Time.get_unix_time_from_system()
 	
+	height_noise = FastNoiseLite.new()
+	height_noise.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+	var new_seed = randi()
+	height_noise.set_seed(new_seed)
+	
 	var children = get_children()
 	for child in children:
+		print("freeing")
 		child.queue_free()
 	
 	mesh_instance = MeshInstance3D.new()

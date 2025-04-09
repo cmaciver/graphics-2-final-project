@@ -15,9 +15,13 @@ transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 
 [node name="Spin Light" parent="." instance=ExtResource("1_0bpka")]
 
 [node name="TerrainGenerator" parent="." instance=ExtResource("1_o1tgq")]
+subdivisions = 7
+scale_factor = 5.0
 
 [node name="FoliageGenerator" parent="." instance=ExtResource("3_0bpka")]
+foliage_count = 30
 
+<<<<<<< Updated upstream
 [node name="@Node3D@50264" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
 transform = Transform3D(0.904624, -0.00425102, 0.426189, 0.0811192, 0.983389, -0.162374, -0.418419, 0.18146, 0.889943, 1.69905, -0.387428, -4.22484)
 
@@ -47,6 +51,10 @@ transform = Transform3D(0.833487, -0.217609, -0.507883, 0.187311, 0.976032, -0.1
 
 [node name="@Node3D@50273" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
 transform = Transform3D(-0.943916, 0.18005, -0.276777, 0.215111, 0.971272, -0.101772, 0.250501, -0.155602, -0.95553, 2.33748, 0.14507, -4.67897)
+=======
+[node name="Foliage" type="Node3D" parent="FoliageGenerator" instance=ExtResource("4_gnrft")]
+transform = Transform3D(0.98724, -0.0979315, 0.125566, 0.118357, 0.978798, -0.167173, -0.106533, 0.179901, 0.977899, 1.99556, -0.374526, 4.11589)
+>>>>>>> Stashed changes
 
 [node name="Balls" type="Node3D" parent="."]
 
