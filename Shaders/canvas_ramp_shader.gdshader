@@ -13,24 +13,31 @@ uniform vec4 ramp_4 = vec4(0.65, 0.8, 0.7, 0.8);
 uniform vec4 ramp_5 = vec4(0.8, 0.97, 0.85, 0.97);
 uniform vec4 ramp_6 = vec4(0.97, 1.0, 0.99, 1.0);
 
-float ramp_value(float value, vec4 ramp) {
-	if (ramp.x <= value && value < ramp.y) {
-		return ramp.z + ((ramp.w - ramp.z) / (ramp.y - ramp.x)) * (value - ramp.x);
-	} else {
-		return value;
-	}
-}
+#define ramp_value(value, ramp) \
+	if (ramp.x <= value && value < ramp.y) { \
+		return ramp.z + ((ramp.w - ramp.z) / (ramp.y - ramp.x)) * (value - ramp.x); \
+	} else
+
+// turned it into a macro now
+//float ramp_value_og(float value, vec4 ramp) {
+	//if (ramp.x <= value && value < ramp.y) {
+		//return ramp.z + ((ramp.w - ramp.z) / (ramp.y - ramp.x)) * (value - ramp.x);
+	//} else {
+		//return value;
+	//}
+//}
 
 float luminance_multiramp(float input) {
 	float val = input;
 	//val = sqrt(val);
 
-	val = ramp_value(val, ramp_1);
-	val = ramp_value(val, ramp_2);
-	val = ramp_value(val, ramp_3);
-	val = ramp_value(val, ramp_4);
-	val = ramp_value(val, ramp_5);
-	val = ramp_value(val, ramp_6);
+	// TODO make this actually work if they are overlapping
+	ramp_value(val, ramp_1);
+	ramp_value(val, ramp_2);
+	ramp_value(val, ramp_3);
+	ramp_value(val, ramp_4);
+	ramp_value(val, ramp_5);
+	ramp_value(val, ramp_6);
 
 	return val;
 }
