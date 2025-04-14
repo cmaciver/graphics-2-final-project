@@ -1,5 +1,5 @@
 @tool
-extends StaticBody3D
+extends Node3D
 class_name TerrainGenerator
 
 enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
@@ -7,18 +7,45 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_tool_button("Generate Terrain") var generate_button = generate_mesh
 
 
-@export_range(0, 8) var subdivisions := 5 :
+@export_group("Chunks")
+
+
+@export var chunk_size := Vector3(10, 1, 10) :
 	set(value):
-		if subdivisions != value:
-			subdivisions = value
+		if chunk_size != value:
+			chunk_size = value
+			update_size()
 			if Engine.is_editor_hint() && is_inside_tree():
 				generate_mesh()
 
 
-@export var size := Vector3(10, 1, 10) :
+@export_range(1, 20) var edge_chunks := 1 :
 	set(value):
-		if size != value:
-			size = value
+		if edge_chunks != value:
+			edge_chunks = value
+			update_size()
+			if Engine.is_editor_hint() && is_inside_tree():
+				generate_mesh()
+
+
+@export_group("Noise")
+
+
+@export_range(0.1, 20, 0.1) var horizontal_scale := 10.0 :
+	set(value):
+		if horizontal_scale != value:
+			horizontal_scale = value
+			if Engine.is_editor_hint() && is_inside_tree():
+				generate_mesh()
+
+
+@export_group("LOD")
+
+
+@export_range(0, 8) var subdivisions := 5 :
+	set(value):
+		if subdivisions != value:
+			subdivisions = value
 			if Engine.is_editor_hint() && is_inside_tree():
 				generate_mesh()
 
@@ -31,15 +58,33 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 				generate_mesh()
 
 
-var mesh_instance: MeshInstance3D
-var collision_shape: CollisionShape3D
-var concave_polygon: ConcavePolygonShape3D
-var height_noise: FastNoiseLite = FastNoiseLite.new()
+@export_group("Material")
 
-@export var scale_factor = 2.5
+
+@export var material : Material = preload("res://Materials/basic.tres") :
+	set(value):
+		if material != value:
+			material = value
+			if Engine.is_editor_hint() && is_inside_tree():
+				generate_mesh()
+
+
+var height_noise := FastNoiseLite.new()
+
+
+var size : Vector3
+
+const PATCH = preload("res://Features/terrain_patch.tscn")
+var patches
+
+
+func update_size() -> void:
+	size = Vector3(edge_chunks, 1, edge_chunks) * chunk_size
+
 
 func heightmap(x: float, z: float) -> float:
-	return (height_noise.get_noise_2d(x * scale_factor, z * scale_factor) * scale_factor)
+	return (height_noise.get_noise_2d(x * horizontal_scale, z * horizontal_scale))
+
 
 func pos_from_map(x: float, z:float) -> Vector3:
 	return Vector3(x, heightmap(x, z), z)
@@ -49,8 +94,41 @@ func _ready() -> void:
 	generate_mesh()
 
 
+func coord_from_idx(idx: int) -> Vector2:
+	if idx == 0:
+		return Vector2(0,0)
+	
+	var cycle = int(ceil(floor(sqrt(idx)) / 2.0))
+	var idx_into_cycle = int(idx - (4.0 * cycle * (cycle - 1.0) + 1.0))
+	var turn = int(floor(float(idx_into_cycle) / (2.0 * cycle)))
+	const corners = [Vector2(-1, 1), Vector2(1, 1), Vector2(1, -1), Vector2(-1, -1)]
+	const steps = [Vector2(1, 0), Vector2(0, -1), Vector2(-1, 0), Vector2(0, 1)]
+	
+	return cycle * corners[turn] + (1 + idx_into_cycle % (2 * cycle)) * steps[turn]
+
+
+func x_dist(idx: int) -> float:
+	return idx - float(edge_chunks - 1) / 2
+
+
+func z_dist(idx: int) -> float:
+	return idx - float(edge_chunks - 1) / 2
+
+
+func get_subdivisions(x_idx: int, z_idx: int) -> int:
+	var dist = max(abs(x_dist(x_idx)), abs(x_dist(z_idx)))
+	
+	var chunk_subdivisions = subdivisions
+	if dist >= float(edge_chunks) / 6:
+		chunk_subdivisions -= 1
+	if dist >= float(edge_chunks) / 3:
+		chunk_subdivisions -= 1
+	
+	return chunk_subdivisions
+
+
 func generate_mesh() -> void:
-	print("Started generating mesh with ", subdivisions, " subdivision", "." if subdivisions == 1 else "s.")
+	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
 	
 	height_noise = FastNoiseLite.new()
@@ -60,89 +138,40 @@ func generate_mesh() -> void:
 	
 	var children = get_children()
 	for child in children:
-		print("freeing")
 		child.queue_free()
 	
-	mesh_instance = MeshInstance3D.new()
-	collision_shape = CollisionShape3D.new()
-	add_child(mesh_instance)
-	add_child(collision_shape)
-	if Engine.is_editor_hint():
-		mesh_instance.set_owner(get_tree().get_edited_scene_root())
-		collision_shape.set_owner(get_tree().get_edited_scene_root())
+	var initial_position = Vector3(chunk_size.x, 0, chunk_size.z) * (edge_chunks - 1) * -0.5
 	
-	mesh_instance.mesh = ArrayMesh.new()
-	var surface_array = []
-	surface_array.resize(Mesh.ARRAY_MAX)
-
-	# PackedVector**Arrays for mesh construction.
-	var verts := PackedVector3Array()
-	#var uvs := PackedVector2Array()
-	var normals := PackedVector3Array()
-	var indices := PackedInt32Array()
-
-	# Mesh Generation
-	var iterations := 2 ** subdivisions + 1
-	var initial := Vector3(-size.x / 2, 0, -size.z / 2)
-	var cell_size := Vector3(size.x / (iterations - 1), size.y, size.z / (iterations - 1))
-	for z_index in iterations:
-		for x_index in iterations:
-			var x := initial.x + x_index * cell_size.x
-			var z := initial.z + z_index * cell_size.z
-			var y := size.y * heightmap(x, z)
-			verts.append(Vector3(x, y, z))
-			#uvs.append(Vector2((x - initial.x) / size.x, (z - initial.z) / size.z))
-			normals.append((pos_from_map(x, z + cell_size.z) - pos_from_map(x, z - cell_size.z)).cross(
-							pos_from_map(x + cell_size.x, z) - pos_from_map(x - cell_size.x, z)).normalized())
-			if x_index > 0 && z_index > 0:
-				var vertex_index := x_index * iterations + z_index
-				var primary_diagonal := false
-				match diagonal_type:
-					DiagonalType.SIMPLE:
-						primary_diagonal = true
-					DiagonalType.ALTERNATING:
-						primary_diagonal = (x_index + z_index) % 2 == 0
-					DiagonalType.SMOOTHING:
-						primary_diagonal = (abs(heightmap(x, z) - heightmap(x - cell_size.x, z - cell_size.z)) >
-										   abs(heightmap(x - cell_size.x, z) - heightmap(x, z - cell_size.z)))
-				
-				if primary_diagonal:
-					indices.append_array(PackedInt32Array([
-						vertex_index - iterations - 1, vertex_index - iterations, vertex_index - 1,
-						vertex_index - iterations, vertex_index, vertex_index - 1
-					]))
-				else:
-					indices.append_array(PackedInt32Array([
-						vertex_index - iterations - 1, vertex_index - iterations, vertex_index,
-						vertex_index - iterations - 1, vertex_index, vertex_index - 1
-					]))
+	patches = []
+	for z in edge_chunks:
+		patches.append([])
+		for x in edge_chunks:
+			patches[z].append(null)
 	
-	# Print number of vertices and triangles
-	print("Generated mesh with ", verts.size(), " vertices and ", indices.size() / 3, " triangles.")
-
-	# Assign arrays to surface array.
-	surface_array[Mesh.ARRAY_VERTEX] = verts
-	#surface_array[Mesh.ARRAY_TEX_UV] = uvs
-	surface_array[Mesh.ARRAY_NORMAL] = normals
-	surface_array[Mesh.ARRAY_INDEX] = indices
-
-	# Create mesh surface from mesh array.
-	# No blendshapes, lods, or compression used.
-	mesh_instance.mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
-	mesh_instance.mesh.surface_set_material(0, preload("res://Materials/basic.tres"))
-	
-	# Create Packed Vector 3 Array of faces for Concave Polygon 3D 
-	var faces := PackedVector3Array()
-	# Iterate through each index in the indices array
-	for index in indices: # Append the vertex corresponding to each index
-		faces.append(verts[index])
-	
-	# Create the Concave Polygon
-	concave_polygon = ConcavePolygonShape3D.new()
-	# Set the faces array of the Concave Polygon
-	concave_polygon.set_faces(faces)
-	# Set the Collision Shape to the Concave Polygon
-	collision_shape.shape = concave_polygon;
+	for i in edge_chunks ** 2:
+		var coord = coord_from_idx(i) + Vector2((edge_chunks - 1) / 2, (edge_chunks - 1) / 2)
+		var x = coord.x
+		var z = coord.y
+		
+		var dist = max(abs(x - float(edge_chunks - 1) / 2), abs(z - float(edge_chunks - 1) / 2))
+		
+		var chunk_subdivisions = subdivisions
+		if dist >= float(edge_chunks) / 6:
+			chunk_subdivisions -= 1
+		if dist >= float(edge_chunks) / 3:
+			chunk_subdivisions -= 1
+		
+		var patch = PATCH.instantiate()
+		patches[z].set(x, patch)
+		patch.initialize(self, x, z, chunk_subdivisions, chunk_size,
+		diagonal_type, material, TerrainPatch.Transition.NONE)
+		
+		add_child(patch)
+		patch.position = initial_position + chunk_size * Vector3(x, 0, z)
+		if Engine.is_editor_hint() && is_inside_tree():
+			patch.set_owner(get_tree().get_edited_scene_root())
+		
+		patch.generate_mesh()
 	
 	var duration := Time.get_unix_time_from_system() - start_time;
-	print("Completed in ", "%0.3f" % duration, " seconds.\n")
+	print("Completed terrain generation in ", "%0.3f" % duration, " seconds.\n\n")
