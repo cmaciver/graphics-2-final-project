@@ -72,7 +72,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 var height_noise := FastNoiseLite.new()
 
 
-var size : Vector3
+var size := chunk_size * Vector3(edge_chunks, 1, edge_chunks)
 
 const PATCH = preload("res://Features/terrain_patch.tscn")
 var patches
