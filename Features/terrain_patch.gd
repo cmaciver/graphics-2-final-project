@@ -15,10 +15,15 @@ var size: Vector3
 var diagonal_type: TerrainGenerator.DiagonalType
 var material : Material
 var transition : Transition
+var iterations : int
 
 var mesh_instance: MeshInstance3D
 var collision_shape: CollisionShape3D
 var concave_polygon: ConcavePolygonShape3D
+
+var vertex_array_2d = []
+var uv_array_2d = []
+var normal_array_2d = []
 
 
 func initialize(terrain_generator: TerrainGenerator, x_idx: int, z_idx: int,
@@ -34,6 +39,8 @@ func initialize(terrain_generator: TerrainGenerator, x_idx: int, z_idx: int,
 	self.diagonal_type = diagonal_type
 	self.material = material
 	self.transition = transition
+	
+	self.iterations = 2 ** subdivisions + 1
 
 
 func generate_mesh() -> void:
@@ -63,22 +70,36 @@ func generate_mesh() -> void:
 	var indices := PackedInt32Array()
 
 	# Mesh Generation
-	var iterations := 2 ** subdivisions + 1
 	var initial := Vector3(-size.x / 2, 0, -size.z / 2) + global_position
 	var cell_size := Vector3(size.x / (iterations - 1), size.y, size.z / (iterations - 1))
+	
+	var x_min = 1 if transition == Transition.WEST  else 0
+	var z_min = 1 if transition == Transition.NORTH else 0
+	var x_max = iterations - (1 if transition == Transition.EAST  else 0)
+	var z_max = iterations - (1 if transition == Transition.SOUTH else 0)
+	
 	for z_index in iterations:
+		vertex_array_2d.append([])
+		uv_array_2d.append([])
+		normal_array_2d.append([])
 		for x_index in iterations:
 			var x := initial.x + x_index * cell_size.x
 			var z := initial.z + z_index * cell_size.z
-			var y := size.y * terrain_generator.heightmap(x, z)
+			var y := terrain_generator.heightmap(x, z)
+			
 			verts.append(Vector3(x, y, z) - global_position)
 			uvs.append(Vector2(float(x_index) / (iterations - 1), float(z_index) / (iterations - 1)))
 			normals.append((terrain_generator.pos_from_map(x, z + cell_size.z) -
 							terrain_generator.pos_from_map(x, z - cell_size.z)).cross(
 							terrain_generator.pos_from_map(x + cell_size.x, z) -
 							terrain_generator.pos_from_map(x - cell_size.x, z)).normalized())
-			if x_index > 0 && z_index > 0:
-				var vertex_index := x_index * iterations + z_index
+			
+			vertex_array_2d[z_index].append(verts[-1])
+			uv_array_2d[z_index].append(uvs[-1])
+			normal_array_2d[z_index].append(normals[-1])
+			
+			if x_index > x_min && x_index < x_max && z_index > z_min && z_index < z_max:
+				var vertex_index := z_index * iterations + x_index
 				var primary_diagonal := false
 				match diagonal_type:
 					TerrainGenerator.DiagonalType.SIMPLE:
@@ -100,6 +121,66 @@ func generate_mesh() -> void:
 					indices.append_array(PackedInt32Array([
 						vertex_index - iterations - 1, vertex_index - iterations, vertex_index,
 						vertex_index - iterations - 1, vertex_index, vertex_index - 1
+					]))
+	
+	# Generate transition ramp
+	var ramp_idx = iterations ** 2
+	match transition:
+		Transition.NORTH:
+			var other : TerrainPatch = terrain_generator.patches[z_idx - 1][x_idx]
+			for x in other.iterations:
+				verts.append(other.vertex_array_2d[-1][x] + other.global_position - global_position)
+				uvs.append(other.uv_array_2d[-1][x])
+				normals.append(other.normal_array_2d[-1][x])
+				
+				if x % 2 == 0 && x > 0:
+					indices.append_array(PackedInt32Array([
+						ramp_idx + x - 2, ramp_idx + x - 1,   iterations + x / 2 - 1,
+						ramp_idx + x - 1, ramp_idx + x,	  	  iterations + x / 2,
+						ramp_idx + x - 1, iterations + x / 2, iterations + x / 2 - 1
+					]))
+		Transition.SOUTH:
+			var other : TerrainPatch = terrain_generator.patches[z_idx + 1][x_idx]
+			for x in other.iterations:
+				verts.append(other.vertex_array_2d[0][x] + other.global_position - global_position)
+				uvs.append(other.uv_array_2d[0][x])
+				normals.append(other.normal_array_2d[0][x])
+				
+				var connect = iterations * (iterations - 2)
+				
+				if x % 2 == 0 && x > 0:
+					indices.append_array(PackedInt32Array([
+						ramp_idx + x - 1, ramp_idx + x - 2,	   connect + x / 2 - 1,
+						ramp_idx + x,	  ramp_idx + x - 1,	   connect + x / 2,
+						ramp_idx + x - 1, connect + x / 2 - 1, connect + x / 2
+					]))
+		Transition.WEST:
+			var other : TerrainPatch = terrain_generator.patches[z_idx][x_idx - 1]
+			for z in other.iterations:
+				verts.append(other.vertex_array_2d[z][-1] + other.global_position - global_position)
+				uvs.append(other.uv_array_2d[z][-1])
+				normals.append(other.normal_array_2d[z][-1])
+				
+				if z % 2 == 0 && z > 0:
+					indices.append_array(PackedInt32Array([
+						ramp_idx + z - 1, ramp_idx + z - 2, 			iterations * (z / 2 - 1) + 1,
+						ramp_idx + z,	  ramp_idx + z - 1, 			iterations * (z / 2) + 1,
+						ramp_idx + z - 1, iterations * (z / 2 - 1) + 1, iterations * (z / 2) + 1
+					]))
+		Transition.EAST:
+			var other : TerrainPatch = terrain_generator.patches[z_idx][x_idx + 1]
+			for z in other.iterations:
+				verts.append(other.vertex_array_2d[z][0] + other.global_position - global_position)
+				uvs.append(other.uv_array_2d[z][0])
+				normals.append(other.normal_array_2d[z][0])
+				
+				var connect = iterations - 2
+				
+				if z % 2 == 0 && z > 0:
+					indices.append_array(PackedInt32Array([
+						ramp_idx + z - 2, ramp_idx + z - 1,				  connect + iterations * (z / 2 - 1),
+						ramp_idx + z - 1, ramp_idx + z,	  				  connect + iterations * (z / 2),
+						ramp_idx + z - 1, connect + iterations * (z / 2), connect + iterations * (z / 2 - 1)
 					]))
 	
 	# Print number of vertices and triangles

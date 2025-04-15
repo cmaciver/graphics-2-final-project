@@ -10,7 +10,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Chunks")
 
 
-@export var chunk_size := Vector3(10, 1, 10) :
+@export var chunk_size := Vector3(10, 5, 10) :
 	set(value):
 		if chunk_size != value:
 			chunk_size = value
@@ -42,7 +42,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("LOD")
 
 
-@export_range(0, 8) var subdivisions := 5 :
+@export_range(0, 8) var subdivisions := 6 :
 	set(value):
 		if subdivisions != value:
 			subdivisions = value
@@ -70,8 +70,6 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 
 
 var height_noise := FastNoiseLite.new()
-
-
 var size := chunk_size * Vector3(edge_chunks, 1, edge_chunks)
 
 const PATCH = preload("res://Features/terrain_patch.tscn")
@@ -83,7 +81,7 @@ func update_size() -> void:
 
 
 func heightmap(x: float, z: float) -> float:
-	return (height_noise.get_noise_2d(x * horizontal_scale, z * horizontal_scale))
+	return (height_noise.get_noise_2d(x * horizontal_scale, z * horizontal_scale)) * size.y
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
@@ -107,22 +105,22 @@ func coord_from_idx(idx: int) -> Vector2:
 	return cycle * corners[turn] + (1 + idx_into_cycle % (2 * cycle)) * steps[turn]
 
 
-func x_dist(idx: int) -> float:
+func get_x_dist(idx: int) -> float:
 	return idx - float(edge_chunks - 1) / 2
 
 
-func z_dist(idx: int) -> float:
+func get_z_dist(idx: int) -> float:
 	return idx - float(edge_chunks - 1) / 2
 
 
 func get_subdivisions(x_idx: int, z_idx: int) -> int:
-	var dist = max(abs(x_dist(x_idx)), abs(x_dist(z_idx)))
+	var dist = max(abs(get_x_dist(x_idx)), abs(get_x_dist(z_idx)))
 	
 	var chunk_subdivisions = subdivisions
-	if dist >= float(edge_chunks) / 6:
-		chunk_subdivisions -= 1
-	if dist >= float(edge_chunks) / 3:
-		chunk_subdivisions -= 1
+	if dist >= 3.5:
+		return chunk_subdivisions - 2
+	if dist >= 1.5:
+		return chunk_subdivisions - 1
 	
 	return chunk_subdivisions
 
@@ -131,10 +129,8 @@ func generate_mesh() -> void:
 	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
 	
-	height_noise = FastNoiseLite.new()
 	height_noise.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	var new_seed = randi()
-	height_noise.set_seed(new_seed)
+	height_noise.set_seed(randi())
 	
 	var children = get_children()
 	for child in children:
@@ -153,18 +149,30 @@ func generate_mesh() -> void:
 		var x = coord.x
 		var z = coord.y
 		
-		var dist = max(abs(x - float(edge_chunks - 1) / 2), abs(z - float(edge_chunks - 1) / 2))
+		var chunk_subdivisions = get_subdivisions(x, z)
 		
-		var chunk_subdivisions = subdivisions
-		if dist >= float(edge_chunks) / 6:
-			chunk_subdivisions -= 1
-		if dist >= float(edge_chunks) / 3:
-			chunk_subdivisions -= 1
+		var x_dist = get_x_dist(x)
+		var z_dist = get_z_dist(z)
+		var north_south = abs(x_dist) < abs(z_dist)
+		
+		var transition := TerrainPatch.Transition.NONE
+		if abs(x_dist) == abs(z_dist):
+			pass
+		elif north_south:
+			if z_dist < 0 && get_subdivisions(x, z + 1) != chunk_subdivisions:
+				transition = TerrainPatch.Transition.SOUTH
+			if z_dist > 0 && get_subdivisions(x, z - 1) != chunk_subdivisions:
+				transition = TerrainPatch.Transition.NORTH
+		else:
+			if x_dist < 0 && get_subdivisions(x + 1, z) != chunk_subdivisions:
+				transition = TerrainPatch.Transition.EAST
+			if x_dist > 0 && get_subdivisions(x - 1, z) != chunk_subdivisions:
+				transition = TerrainPatch.Transition.WEST
 		
 		var patch = PATCH.instantiate()
 		patches[z].set(x, patch)
 		patch.initialize(self, x, z, chunk_subdivisions, chunk_size,
-		diagonal_type, material, TerrainPatch.Transition.NONE)
+		diagonal_type, material, transition)
 		
 		add_child(patch)
 		patch.position = initial_position + chunk_size * Vector3(x, 0, z)
