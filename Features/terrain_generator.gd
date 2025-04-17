@@ -2,6 +2,7 @@
 extends Node3D
 class_name TerrainGenerator
 
+enum DetailMode {HIGH, MEDIUM, LOW, DISTANCE}
 enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 
 @export_tool_button("Generate Terrain") var generate_button = generate_mesh
@@ -15,8 +16,6 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 		if chunk_size != value:
 			chunk_size = value
 			update_size()
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
 
 
 @export_range(1, 20) var edge_chunks := 1 :
@@ -24,38 +23,24 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 		if edge_chunks != value:
 			edge_chunks = value
 			update_size()
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
 
 
 @export_group("Noise")
 
 
-@export_range(0.1, 20, 0.1) var horizontal_scale := 10.0 :
-	set(value):
-		if horizontal_scale != value:
-			horizontal_scale = value
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
+@export_range(0.1, 20, 0.1) var horizontal_scale := 10.0
 
 
 @export_group("LOD")
 
 
-@export_range(0, 8) var subdivisions := 6 :
-	set(value):
-		if subdivisions != value:
-			subdivisions = value
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
+@export var detail_mode := DetailMode.DISTANCE
 
 
-@export var diagonal_type := DiagonalType.SMOOTHING :
-	set(value):
-		if diagonal_type != value:
-			diagonal_type = value
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
+@export_range(2, 8) var subdivisions := 6
+
+
+@export var diagonal_type := DiagonalType.SMOOTHING
 
 
 @export_group("Material")
@@ -65,8 +50,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 	set(value):
 		if material != value:
 			material = value
-			if Engine.is_editor_hint() && is_inside_tree():
-				generate_mesh()
+			update_material()
 
 
 var height_noise := FastNoiseLite.new()
@@ -86,10 +70,6 @@ func heightmap(x: float, z: float) -> float:
 
 func pos_from_map(x: float, z:float) -> Vector3:
 	return Vector3(x, heightmap(x, z), z)
-
-
-func _ready() -> void:
-	generate_mesh()
 
 
 func coord_from_idx(idx: int) -> Vector2:
@@ -114,15 +94,26 @@ func get_z_dist(idx: int) -> float:
 
 
 func get_subdivisions(x_idx: int, z_idx: int) -> int:
-	var dist = max(abs(get_x_dist(x_idx)), abs(get_x_dist(z_idx)))
+	match detail_mode:
+		DetailMode.DISTANCE:
+			var dist = max(abs(get_x_dist(x_idx)), abs(get_x_dist(z_idx)))
+			
+			if dist >= 3.5:
+				return subdivisions - 2
+			if dist >= 1.5:
+				return subdivisions - 1
+		DetailMode.LOW:
+			return subdivisions - 2
+		DetailMode.MEDIUM:
+			return subdivisions - 1
 	
-	var chunk_subdivisions = subdivisions
-	if dist >= 3.5:
-		return chunk_subdivisions - 2
-	if dist >= 1.5:
-		return chunk_subdivisions - 1
-	
-	return chunk_subdivisions
+	return subdivisions
+
+
+func update_material() -> void:
+	for patch_row in patches:
+		for patch: TerrainPatch in patch_row:
+			patch.update_material(material)
 
 
 func generate_mesh() -> void:
@@ -180,6 +171,10 @@ func generate_mesh() -> void:
 			patch.set_owner(get_tree().get_edited_scene_root())
 		
 		patch.generate_mesh()
+	
+	var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
+	if foliage:
+		foliage.init_foliage()
 	
 	var duration := Time.get_unix_time_from_system() - start_time;
 	print("Completed terrain generation in ", "%0.3f" % duration, " seconds.\n\n")

@@ -28,8 +28,8 @@ func init_foliage():
 
 
 # Called when the node enters the scene tree & all it's children are ready
-func _ready() -> void:
-	init_foliage()
+#func _ready() -> void:
+	#init_foliage()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

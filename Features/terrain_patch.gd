@@ -43,6 +43,11 @@ func initialize(terrain_generator: TerrainGenerator, x_idx: int, z_idx: int,
 	self.iterations = 2 ** subdivisions + 1
 
 
+func update_material(material: Material) -> void:
+	self.material = material
+	mesh_instance.mesh.surface_set_material(0, material)
+
+
 func generate_mesh() -> void:
 	print("Started generating patch with ", subdivisions, " subdivision", "." if subdivisions == 1 else "s.")
 	var start_time := Time.get_unix_time_from_system()
@@ -52,6 +57,7 @@ func generate_mesh() -> void:
 		child.queue_free()
 	
 	mesh_instance = MeshInstance3D.new()
+	mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
 	collision_shape = CollisionShape3D.new()
 	add_child(mesh_instance)
 	add_child(collision_shape)
