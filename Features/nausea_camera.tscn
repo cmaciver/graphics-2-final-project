@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8jpdh54tnl80"]
+
+[ext_resource type="Script" uid="uid://5cio2ntbwrfa" path="res://Features/nausea_camera.gd" id="1_iaog7"]
+
+[node name="NauseaCamera" type="Node3D"]
+script = ExtResource("1_iaog7")
+
+[node name="Camera3D" type="Camera3D" parent="."]
