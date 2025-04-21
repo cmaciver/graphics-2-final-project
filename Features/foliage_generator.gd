@@ -2,7 +2,6 @@
 extends Node3D
 class_name FoliageGenerator
 
-@export_tool_button("Generate Foliage") var generate_button = scatter_foliage
 @export var foliage_count = 10
 
 

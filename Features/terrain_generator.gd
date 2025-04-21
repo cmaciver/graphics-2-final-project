@@ -11,7 +11,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Chunks")
 
 
-@export var chunk_size := Vector3(10, 5, 10) :
+@export var chunk_size := Vector3(10, 1, 10) :
 	set(value):
 		if chunk_size != value:
 			chunk_size = value
@@ -28,7 +28,12 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Noise")
 
 
-@export_range(0.1, 20, 0.1) var horizontal_scale := 10.0
+@export_range(0.1, 20, 0.1) var density_a := 2.0
+@export_range(0.1, 50, 0.1) var height_a := 35.0
+@export_range(0.1, 20, 0.1) var density_b := 10.0
+@export_range(0.1, 50, 0.1) var height_b := 5.0
+@export_range(0.1, 20, 0.1) var density_c := 15.0
+@export_range(0.1, 50, 0.1) var height_c := 2.0
 
 
 @export_group("LOD")
@@ -53,7 +58,9 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			update_material()
 
 
-var height_noise := FastNoiseLite.new()
+var height_noise_a := FastNoiseLite.new()
+var height_noise_b := FastNoiseLite.new()
+var height_noise_c := FastNoiseLite.new()
 var size := chunk_size * Vector3(edge_chunks, 1, edge_chunks)
 
 const PATCH = preload("res://Features/terrain_patch.tscn")
@@ -65,7 +72,11 @@ func update_size() -> void:
 
 
 func heightmap(x: float, z: float) -> float:
-	return (height_noise.get_noise_2d(x * horizontal_scale, z * horizontal_scale)) * size.y
+	return (
+		height_noise_a.get_noise_2d(x * density_a, z * density_a) * height_a +
+		height_noise_b.get_noise_2d(x * density_b, z * density_b) * height_b +
+		height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
+	) * size.y # / (height_a + height_b + height_c)
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
@@ -120,8 +131,12 @@ func generate_mesh() -> void:
 	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
 	
-	height_noise.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise.set_seed(randi())
+	height_noise_a.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+	height_noise_a.set_seed(randi())
+	height_noise_b.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+	height_noise_b.set_seed(randi())
+	height_noise_c.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+	height_noise_c.set_seed(randi())
 	
 	var children = get_children()
 	for child in children:
