@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://dj2jvxt0xkhvf"]
+
+[ext_resource type="Texture2D" path="res://Textures/BroadleafTree_Leaves.png" id="1_ejcff"]
+[ext_resource type="Texture2D" path="res://Textures/Bark_Normal.png" id="2_1lf0t"]
+
+[resource]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_color = Color(0, 1, 0, 1)
+albedo_texture = ExtResource("1_ejcff")
+normal_texture = ExtResource("2_1lf0t")

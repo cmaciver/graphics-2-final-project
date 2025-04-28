@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cakh13vblxxut"]
+
+[ext_resource type="Texture2D" uid="uid://brpmxd1u5bn2d" path="res://Textures/Bushes/Bush_02/Bush_Branches_Purple.png" id="1_50f7a"]
+
+[resource]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_50f7a")

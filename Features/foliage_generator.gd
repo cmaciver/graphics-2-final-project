@@ -6,7 +6,7 @@ class_name FoliageGenerator
 @export var foliage_count = 10
 
 
-var foliage_class = preload("res://Testing Assets/test_big_tree.tscn")
+var foliage_class = preload("res://Testing Assets/Trees/tree_1.tscn")
 
 var terrain : TerrainGenerator
 var rng = RandomNumberGenerator.new()
