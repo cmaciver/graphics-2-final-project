@@ -5,7 +5,7 @@ class_name TerrainGenerator
 enum DetailMode {HIGH, MEDIUM, LOW, DISTANCE}
 enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 
-@export_tool_button("Generate Terrain") var generate_button = generate_mesh
+@export_tool_button("Generate Terrain", "MainPlay") var generate_button = generate_mesh
 
 
 @export_group("Chunks")
@@ -25,15 +25,40 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			update_size()
 
 
+@export_group("Random")
+
+
+@export var seed := 0
+@export_tool_button("Randomize Seed", "Loop") var randomize = randomize_seed
+
+
 @export_group("Noise")
 
 
-@export_range(0.1, 20, 0.1) var density_a := 2.0
-@export_range(0.1, 50, 0.1) var height_a := 35.0
-@export_range(0.1, 20, 0.1) var density_b := 10.0
-@export_range(0.1, 50, 0.1) var height_b := 5.0
-@export_range(0.1, 20, 0.1) var density_c := 15.0
-@export_range(0.1, 50, 0.1) var height_c := 2.0
+@export_range(0.1, 20, 0.1) var density_a := 2.0 :
+	set(value):
+		density_a = value
+		touch_noise()
+@export_range(0.1, 50, 0.1) var height_a := 35.0 :
+	set(value):
+		height_a = value
+		touch_noise()
+@export_range(0.1, 20, 0.1) var density_b := 10.0 :
+	set(value):
+		density_b = value
+		touch_noise()
+@export_range(0.1, 50, 0.1) var height_b := 5.0 :
+	set(value):
+		height_b = value
+		touch_noise()
+@export_range(0.1, 20, 0.1) var density_c := 15.0 :
+	set(value):
+		density_c = value
+		touch_noise()
+@export_range(0.1, 50, 0.1) var height_c := 2.0 :
+	set(value):
+		height_c = value
+		touch_noise()
 
 
 @export_group("LOD")
@@ -63,13 +88,20 @@ var height_noise_a := FastNoiseLite.new()
 var height_noise_b := FastNoiseLite.new()
 var height_noise_c := FastNoiseLite.new()
 var size := chunk_size * Vector3(edge_chunks, 1, edge_chunks)
+var shape_changed = true
 
 const PATCH = preload("res://Features/terrain_patch.tscn")
-var patches
+var patches = []
+
+
+func touch_noise() -> void:
+	if Engine.is_editor_hint():
+		shape_changed = true
 
 
 func update_size() -> void:
 	size = Vector3(edge_chunks, 1, edge_chunks) * chunk_size
+	shape_changed = true
 
 
 func heightmap(x: float, z: float) -> float:
@@ -128,16 +160,21 @@ func update_material() -> void:
 			patch.update_material(material)
 
 
+func randomize_seed() -> void:
+	shape_changed = true
+	seed = randi()
+
+
 func generate_mesh() -> void:
 	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
 	
 	height_noise_a.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_a.set_seed(randi())
+	height_noise_a.set_seed(seed)
 	height_noise_b.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_b.set_seed(randi())
+	height_noise_b.set_seed(seed + 1)
 	height_noise_c.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_c.set_seed(randi())
+	height_noise_c.set_seed(seed + 2)
 	
 	var children = get_children()
 	for child in children:
@@ -188,9 +225,11 @@ func generate_mesh() -> void:
 		
 		patch.generate_mesh()
 	
-	var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
-	if foliage:
-		foliage.init_foliage()
+	if shape_changed:
+		shape_changed = false
+		var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
+		if foliage:
+			foliage.init_foliage()
 	
 	var duration := Time.get_unix_time_from_system() - start_time;
 	print("Completed terrain generation in ", "%0.3f" % duration, " seconds.\n\n")
