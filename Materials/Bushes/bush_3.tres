@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cvi00alj7ymhr"]
+
+[ext_resource type="Texture2D" uid="uid://cdrji8bha8vdu" path="res://Textures/Bushes/Bush_03/Bush_Branches.png" id="1_1cima"]
+
+[resource]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_color = Color(0.624618, 0.763628, 3.85046e-07, 1)
+albedo_texture = ExtResource("1_1cima")
