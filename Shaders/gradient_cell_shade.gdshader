@@ -26,9 +26,9 @@ float ramp_value(float value, vec4 ramp) {
 float luminance_multiramp(float input) {
 	float val = input;
 	//val = sqrt(val);
-	
+
 	//val = floor(input * float(light_divisions)) / float(light_divisions);
-	
+
 	val = ramp_value(val, ramp_1);
 	val = ramp_value(val, ramp_2);
 	val = ramp_value(val, ramp_3);
@@ -36,7 +36,7 @@ float luminance_multiramp(float input) {
 	val = ramp_value(val, ramp_5);
 	val = ramp_value(val, ramp_6);
 
-	
+
 	return val;
 }
 
@@ -52,7 +52,7 @@ void fragment() {
 		ALBEDO = sRGB_color;
 		ALPHA = 1.0;
 	} else {
-		
+
 
 		vec3 linear_color;
 		linear_color = sRGB_color;
@@ -64,7 +64,7 @@ void fragment() {
 		vec3 oklab_color = oklab_from_linear(linear_color);
 		oklab_color = oklch_from_oklab(oklab_color);
 		//oklab_color.z += 1.7;
-		
+
 
 		// do cell shading on just the luminance
 		oklab_color.x = luminance_multiramp(oklab_color.x);
@@ -73,7 +73,7 @@ void fragment() {
 		vec3 final_color;
 		final_color = linear_from_oklab(oklab_color);
 		//final_color = sRGB_from_linear(final_color);
-		
+
 		ALBEDO = final_color;
 		ALPHA = 0.5;
 		ALPHA_ANTIALIASING_EDGE = 0.2; // does this do anything ?

@@ -1,9 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://brwbresdoh5v3"]
+[gd_scene load_steps=2 format=3 uid="uid://brwbresdoh5v3"]
 
 [ext_resource type="Script" uid="uid://bpq3lwq1cx0hu" path="res://Features/foliage_generator.gd" id="1_7dmnn"]
-[ext_resource type="PackedScene" uid="uid://dd0tfk6skp7j6" path="res://Testing Assets/test_foliage.tscn" id="2_onar1"]
 
 [node name="FoliageGenerator" type="Node3D"]
 script = ExtResource("1_7dmnn")
-
-[node name="@Node3D@32016" parent="." instance=ExtResource("2_onar1")]
