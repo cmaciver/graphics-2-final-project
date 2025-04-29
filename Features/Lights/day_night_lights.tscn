@@ -1,6 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8jgwpec83poy"]
+[gd_scene load_steps=8 format=3 uid="uid://b8jgwpec83poy"]
 
 [ext_resource type="Script" uid="uid://d2tvt58llqae1" path="res://Features/Lights/day_night_lights.gd" id="1_p73tq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2cp00"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_ypwov"]
+sky_material = SubResource("ProceduralSkyMaterial_2cp00")
+
+[sub_resource type="Environment" id="Environment_d2llb"]
+background_mode = 2
+sky = SubResource("Sky_ypwov")
+tonemap_mode = 2
+glow_enabled = true
 
 [sub_resource type="Animation" id="Animation_p73tq"]
 length = 0.001
@@ -115,6 +128,9 @@ _data = {
 
 [node name="DayNightLights" type="Node3D"]
 script = ExtResource("1_p73tq")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_d2llb")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-3.61999e-06, -1, 3.61999e-06, 0, -3.61999e-06, -1, 1, -3.61999e-06, 1.31043e-11, 0, 0, 0)

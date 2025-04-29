@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bml5je7nwsluf"]
+
+[ext_resource type="Script" uid="uid://ycjdvtlto4c3" path="res://Features/Cameras/orbit_camera.gd" id="1_n55g6"]
+
+[node name="OrbitCamera" type="Node3D"]
+script = ExtResource("1_n55g6")
+
+[node name="Camera3D" type="Camera3D" parent="."]
