@@ -1,3 +1,4 @@
+@icon("res://_ico/DirectionalLight3D.svg")
 extends Node3D
 
 @onready var light = $DirectionalLight3D

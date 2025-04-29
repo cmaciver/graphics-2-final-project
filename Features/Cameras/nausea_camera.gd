@@ -1,3 +1,4 @@
+@icon("res://_ico/Camera3D.svg")
 extends Node3D
 
 @onready var camera = $Camera3D
@@ -9,7 +10,6 @@ var angle = 0
 
 func _process(delta : float) -> void:
 	angle += delta * SPEED
-	
 	
 	camera.position = Vector3.RIGHT.rotated(Vector3.BACK, angle)
 	camera.look_at(

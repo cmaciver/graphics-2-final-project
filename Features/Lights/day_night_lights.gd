@@ -1,3 +1,4 @@
+@icon("res://_ico/DirectionalLight3D.svg")
 extends Node3D
 
 @export var start_time = 6.0
