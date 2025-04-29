@@ -1,4 +1,5 @@
 shader_type spatial;
+render_mode ambient_light_disabled;
 
 uniform sampler2D grass_texture;
 uniform sampler2D rock_texture;
@@ -43,5 +44,5 @@ void fragment() {
 	vec3 rockgrass_albedo = mix(rock_albedo, grass_albedo, rock_grass_weight);
 	vec3 rockgrass_normal = mix(rock_normal, grass_normal, rock_grass_weight);
 	ALBEDO = mix(sand_albedo, rockgrass_albedo, sand_rockgrass_weight);
-	NORMAL = mix(sand_normal, rockgrass_normal, sand_rockgrass_weight);
+	NORMAL_MAP = mix(sand_normal, rockgrass_normal, sand_rockgrass_weight);
 }
