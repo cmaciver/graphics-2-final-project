@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ryhjgbkjxiqo"]
+
+[ext_resource type="PackedScene" uid="uid://g6x0mpgwt84" path="res://Features/water_plane.tscn" id="1_hls2h"]
+
+[node name="AdamTestScene" type="Node3D"]
+
+[node name="PlaneWater" parent="." instance=ExtResource("1_hls2h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
