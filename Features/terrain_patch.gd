@@ -136,7 +136,7 @@ func generate_mesh() -> void:
 			var other : TerrainPatch = terrain_generator.patches[z_idx - 1][x_idx]
 			for x in other.iterations:
 				verts.append(other.vertex_array_2d[-1][x] + other.global_position - global_position)
-				uvs.append(other.uv_array_2d[-1][x])
+				uvs.append(Vector2(other.uv_array_2d[-1][x].x, 1 - other.uv_array_2d[-1][x].y))
 				normals.append(other.normal_array_2d[-1][x])
 				
 				if x % 2 == 0 && x > 0:
@@ -149,7 +149,7 @@ func generate_mesh() -> void:
 			var other : TerrainPatch = terrain_generator.patches[z_idx + 1][x_idx]
 			for x in other.iterations:
 				verts.append(other.vertex_array_2d[0][x] + other.global_position - global_position)
-				uvs.append(other.uv_array_2d[0][x])
+				uvs.append(Vector2(other.uv_array_2d[0][x].x, 1 - other.uv_array_2d[0][x].y))
 				normals.append(other.normal_array_2d[0][x])
 				
 				var connect = iterations * (iterations - 2)
@@ -164,7 +164,7 @@ func generate_mesh() -> void:
 			var other : TerrainPatch = terrain_generator.patches[z_idx][x_idx - 1]
 			for z in other.iterations:
 				verts.append(other.vertex_array_2d[z][-1] + other.global_position - global_position)
-				uvs.append(other.uv_array_2d[z][-1])
+				uvs.append(Vector2(1 - other.uv_array_2d[z][-1].x, other.uv_array_2d[z][-1].y))
 				normals.append(other.normal_array_2d[z][-1])
 				
 				if z % 2 == 0 && z > 0:
@@ -177,7 +177,7 @@ func generate_mesh() -> void:
 			var other : TerrainPatch = terrain_generator.patches[z_idx][x_idx + 1]
 			for z in other.iterations:
 				verts.append(other.vertex_array_2d[z][0] + other.global_position - global_position)
-				uvs.append(other.uv_array_2d[z][0])
+				uvs.append(Vector2(1 - other.uv_array_2d[z][0].x, other.uv_array_2d[z][0].y))
 				normals.append(other.normal_array_2d[z][0])
 				
 				var connect = iterations - 2
