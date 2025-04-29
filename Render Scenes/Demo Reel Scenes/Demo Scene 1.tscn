@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://g6x0mpgwt84"]
+[gd_scene load_steps=11 format=3 uid="uid://sy8trmb80f07"]
 
-[ext_resource type="Shader" uid="uid://kheler7rwmbf" path="res://Shaders/flat_water.gdshader" id="1_yjy6t"]
-[ext_resource type="Script" uid="uid://do4niks6xgkk8" path="res://Features/water_plane.gd" id="2_11kqu"]
+[ext_resource type="PackedScene" uid="uid://g6x0mpgwt84" path="res://Features/water_plane.tscn" id="1_jf1au"]
+[ext_resource type="Shader" uid="uid://kheler7rwmbf" path="res://Shaders/flat_water.gdshader" id="2_6syau"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_hls2h"]
 
@@ -20,9 +20,9 @@ noise = SubResource("FastNoiseLite_lt4b3")
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lt4b3"]
 noise = SubResource("FastNoiseLite_66oea")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_11kqu"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_66oea"]
 render_priority = 0
-shader = ExtResource("1_yjy6t")
+shader = ExtResource("2_6syau")
 shader_parameter/plane_size = Vector2(8, 8)
 shader_parameter/primary_color = Color(2.57981e-05, 0.738017, 0.878215, 1)
 shader_parameter/secondary_color = Color(4.81308e-08, 0.272825, 0.353848, 1)
@@ -36,17 +36,27 @@ shader_parameter/normal_map_a_strength = 1.0
 shader_parameter/normal_map_b_strength = 1.0
 shader_parameter/uv_scale = 0.5
 shader_parameter/movement_direction = Vector2(1, 0)
-shader_parameter/movement_strength = 1.0
+shader_parameter/movement_strength = 0.5
 shader_parameter/depth_distance = 0.5
 shader_parameter/beers_law = 5.0
 shader_parameter/water_transparency = 1.0
 shader_parameter/refraction_strength = 0.01
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_lt4b3"]
-material = SubResource("ShaderMaterial_11kqu")
+[sub_resource type="PlaneMesh" id="PlaneMesh_dkghb"]
+material = SubResource("ShaderMaterial_66oea")
+size = Vector2(8, 8)
 subdivide_width = 16
 subdivide_depth = 16
 
-[node name="PlaneWater" type="MeshInstance3D"]
-mesh = SubResource("PlaneMesh_lt4b3")
-script = ExtResource("2_11kqu")
+[node name="DemoScene1" type="Node3D"]
+
+[node name="PlaneWater" parent="." instance=ExtResource("1_jf1au")]
+mesh = SubResource("PlaneMesh_dkghb")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 3, 6)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.29031, 9.60461, -1.27389)
+omni_range = 11.424
+omni_attenuation = -1.384

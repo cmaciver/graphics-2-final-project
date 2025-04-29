@@ -3,6 +3,8 @@ shader_type spatial;
 uniform sampler2D screen_texture: hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D depth_texture: hint_depth_texture, repeat_disable, filter_nearest;
 
+uniform vec2 plane_size;
+
 uniform vec4 primary_color: source_color;
 uniform vec4 secondary_color: source_color;
 uniform float roughness = 0.2;
@@ -50,7 +52,7 @@ void fragment() {
 	float fresnel = fresnel(3.0, NORMAL, VIEW);
 
 	vec2 uv = UV * uv_scale;
-	vec2 uv_movement = normalize(movement_direction) * TIME * movement_strength;
+	vec2 uv_movement = normalize(movement_direction) * TIME * movement_strength / plane_size;
 
 	vec3 normal_map_component_a = texture(normal_map_a, uv + uv_movement).rgb * normal_map_a_strength;
 	vec3 normal_map_component_b = texture(normal_map_b, uv + uv_movement * 0.5).rgb * normal_map_b_strength;
