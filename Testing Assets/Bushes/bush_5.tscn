@@ -7,8 +7,8 @@
 render_priority = 0
 shader = ExtResource("2_66twr")
 shader_parameter/Wind_Direction = Vector2(1, 1)
-shader_parameter/Wind_Speed = 0.05
-shader_parameter/Wind_Strength = 0.1
+shader_parameter/Wind_Speed = 0.15
+shader_parameter/Wind_Strength = 0.2
 shader_parameter/ColorParameter = Color(0.419425, 0.609452, 0.194944, 1)
 shader_parameter/Leaf_Texture = ExtResource("2_8sdis")
 
