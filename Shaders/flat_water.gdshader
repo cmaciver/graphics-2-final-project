@@ -51,7 +51,7 @@ float fresnel(float amount, vec3 normal, vec3 view) {
 void fragment() {
 	float fresnel = fresnel(3.0, NORMAL, VIEW);
 
-	vec2 uv = UV * uv_scale;
+	vec2 uv = vec2(UV.x * plane_size.x, UV.y * plane_size.y) * uv_scale;
 	vec2 uv_movement = normalize(movement_direction) * TIME * movement_strength / plane_size;
 
 	vec3 normal_map_component_a = texture(normal_map_a, uv + uv_movement).rgb * normal_map_a_strength;
