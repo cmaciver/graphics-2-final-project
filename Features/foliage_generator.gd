@@ -2,64 +2,104 @@
 extends Node3D
 class_name FoliageGenerator
 
-@export var foliage_count = 10
+@export var foliage_subdivisions := 6
 
-
-var foliage_class = preload("res://Testing Assets/Trees/tree_1.tscn")
+@export_tool_button("Generate Foliage") var generate_button = scatter_foliage
 
 var terrain : TerrainGenerator
 var rng = RandomNumberGenerator.new()
 
+@onready var trees : Array[PackedScene] = [
+	preload("res://Testing Assets/Trees/tree_1.tscn"),
+	preload("res://Testing Assets/Trees/tree_2.tscn"),
+	preload("res://Testing Assets/Trees/tree_3.tscn"),
+	preload("res://Testing Assets/Trees/tree_4.tscn"),
+	preload("res://Testing Assets/Trees/tree_5.tscn"),
+]
+
+@onready var bushes : Array[PackedScene] = [
+	preload("res://Testing Assets/Bushes/bush_1.tscn"),
+	preload("res://Testing Assets/Bushes/bush_2.tscn"),
+	preload("res://Testing Assets/Bushes/bush_3.tscn"),
+	preload("res://Testing Assets/Bushes/bush_4.tscn"),
+	preload("res://Testing Assets/Bushes/bush_5.tscn"),
+	preload("res://Testing Assets/Bushes/bush_6.tscn"),
+]
+
+@onready var rocks : Array[PackedScene] = [
+	preload("res://Testing Assets/Rocks/rock_1.tscn"),
+	preload("res://Testing Assets/Rocks/rock_2.tscn"),
+	preload("res://Testing Assets/Rocks/rock_3.tscn"),
+	preload("res://Testing Assets/Rocks/rock_4.tscn"),
+	preload("res://Testing Assets/Rocks/rock_5.tscn"),
+	preload("res://Testing Assets/Rocks/rock_6.tscn"),
+]
+
 
 func init_foliage():
+	rng.seed = Time.get_ticks_usec()
 	terrain = get_parent().find_child("*TerrainGenerator*")
 	
 	if not terrain:
 		print("uhoh, no terrain")
 		return
 	
-	rng.seed = Time.get_ticks_usec()
 	scatter_foliage()
-
-## called the very first time it enters the tree
-#func _enter_tree():
-	#init_foliage()
-
-
-# Called when the node enters the scene tree & all it's children are ready
-#func _ready() -> void:
-	#init_foliage()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
 
 
 func scatter_foliage():
 	for child in get_children():
 		child.queue_free()
 	
-	for i in foliage_count:
-		var new_foliage = foliage_class.instantiate()
-		
-		add_child(new_foliage)
-		#new_foliage.set_name("Foliage 1") # figure out why this breaks: haha it's because queue free takes time
-		if Engine.is_editor_hint():
-			new_foliage.set_owner(get_tree().get_edited_scene_root())
-		
-		new_foliage.position = select_random_point()
-		
-		# and rotate IN RADIANS
-		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
-		
-		new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
-		new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+	for i in range(foliage_subdivisions):
+		for j in range(foliage_subdivisions):
+			var rand = rng.randf()
+			var pos = select_random_point(i, j)
+			
+			# chance to skip entirely
+			if rand < 0.6:
+				continue
+			
+			elif rand < 0.7:
+				pass # tree
+				
+			elif rand < 0.85:
+				pass # rock
+				
+			elif rand < 1.0:
+				pass # bush
+			
+			
+			var new_foliage = create_object(trees)
+			
+			# place the foliage in the world, then select the type
+			new_foliage.position = pos
+			
+
+			# and rotate IN RADIANS
+			new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+			new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+			new_foliage.rotation.z = rng.randf_range(0, PI / 12)
 
 
-func select_random_point():
-	var x = rng.randf_range(-terrain.size.x / 2, terrain.size.x / 2)
-	var z = rng.randf_range(-terrain.size.z / 2, terrain.size.z / 2)
-	var y = terrain.heightmap(x, z)
+## select the foliage type and place it in the world
+func create_object(scene_array: Array[PackedScene]):
+	var type = scene_array.pick_random()
+	var new_foliage = type.instantiate()
+	
+	add_child(new_foliage)
+	if Engine.is_editor_hint():
+		new_foliage.set_owner(get_tree().get_edited_scene_root())
+	
+	return new_foliage
+
+
+func select_random_point(cell_x, cell_z):
+	var width = terrain.size.x / foliage_subdivisions
+	var length = terrain.size.z / foliage_subdivisions
+	
+	var x = cell_x * width + rng.randf_range(0, width) - terrain.size.x / 2
+	var z = cell_z * length + rng.randf_range(0, length) - terrain.size.z / 2
+	var y = terrain.heightmap(x, z) - randf_range(0.1, 0.7) # maybe make this a variable later?
 	
 	return Vector3(x, y, z)
