@@ -214,7 +214,9 @@ void fragment() {
 
 }
 "
+graph_offset = Vector2(-250.03, 561.072)
 flags/depth_prepass_alpha = true
+preview_params/Wind_Speed = "0.15"
 nodes/vertex/0/position = Vector2(2060, 900)
 nodes/vertex/2/node = SubResource("VisualShaderNodeInput_xb07i")
 nodes/vertex/2/position = Vector2(-80, 660)
