@@ -55,7 +55,8 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 	set(value):
 		if material != value:
 			material = value
-			update_material()
+			if Engine.is_editor_hint():
+				update_material()
 
 
 var height_noise_a := FastNoiseLite.new()
