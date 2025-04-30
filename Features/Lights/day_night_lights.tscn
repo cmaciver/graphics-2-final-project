@@ -11,8 +11,15 @@ sky_material = SubResource("ProceduralSkyMaterial_2cp00")
 [sub_resource type="Environment" id="Environment_d2llb"]
 background_mode = 2
 sky = SubResource("Sky_ypwov")
-tonemap_mode = 2
+ambient_light_energy = 0.0
+reflected_light_source = 2
+sdfgi_use_occlusion = true
+sdfgi_energy = 0.25
 glow_enabled = true
+glow_intensity = 8.0
+glow_mix = 1.0
+glow_hdr_luminance_cap = 1.71
+adjustment_enabled = true
 
 [sub_resource type="Animation" id="Animation_p73tq"]
 length = 0.001
@@ -71,10 +78,10 @@ tracks/4/path = NodePath("WorldEnvironment:environment")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": []
+"values": [SubResource("Environment_d2llb")]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -124,12 +131,24 @@ tracks/8/keys = {
 "update": 0,
 "values": [Color(0.6463, 0.6558, 0.6708, 1)]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Moon:light_energy")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.0]
+}
 
 [sub_resource type="Animation" id="Animation_yblkx"]
 resource_name = "time"
 length = 24.0
 loop_mode = 1
-step = 0.0333
+step = 1.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -149,10 +168,10 @@ tracks/1/path = NodePath("Sun:light_color")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 6, 12, 16, 18, 19, 20.6, 24),
+"times": PackedFloat32Array(0, 6, 12, 16, 18, 19, 21, 24),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(0, 0, 0, 1), Color(0.6097, 0.67, 0.66196, 1), Color(1, 1, 0.866667, 1), Color(1, 1, 0.74, 1), Color(1, 0.796078, 0.321569, 1), Color(1, 0.592, 0.32, 1), Color(0.277704, 0.118537, 0, 1), Color(0, 0, 0, 1)]
+"values": [Color(0, 0, 0, 1), Color(0.816546, 0.852663, 0.847685, 1), Color(1, 1, 0.866667, 1), Color(1, 1, 0.74, 1), Color(1, 0.847, 0.49, 1), Color(1, 0.676, 0.46, 1), Color(0.53, 0.229667, 0, 1), Color(0, 0, 0, 1)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -173,7 +192,7 @@ tracks/3/path = NodePath("Moon:light_color")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 6, 8, 12, 16, 18, 20.6333, 24),
+"times": PackedFloat32Array(0, 6, 8, 12, 16, 18, 21, 24),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [Color(0.4712, 0.496, 0.62, 1), Color(0.3472, 0.392667, 0.62, 1), Color(0.231467, 0.261778, 0.413333, 1), Color(0, 0, 0, 1), Color(0.231467, 0.261778, 0.413333, 1), Color(0.3472, 0.392667, 0.62, 1), Color(0.4712, 0.496, 0.62, 1), Color(0.4712, 0.496, 0.62, 1)]
@@ -185,10 +204,10 @@ tracks/4/path = NodePath("WorldEnvironment:environment")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": []
+"values": [SubResource("Environment_d2llb")]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -197,10 +216,10 @@ tracks/5/path = NodePath("WorldEnvironment:environment:sky:sky_material:sky_top_
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 6, 8.81977, 15.4099, 16.9181, 17.9837, 24),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 2, 6, 8, 12, 15.4099, 16.9181, 17.9837, 20, 24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 0.482969, 1),
 "update": 0,
-"values": [Color(0.0283835, 2.40654e-08, 0.272794, 1), Color(0, 0.311511, 0.578767, 1), Color(0, 0.58597, 0.949363, 1), Color(0.7, 0.7, 0.7, 1), Color(0.55, 0.539, 0.385, 1), Color(0.690932, 0.466099, 0.317225, 1), Color(0.0283835, 2.40654e-08, 0.272794, 1)]
+"values": [Color(0.0117647, 0, 0.188235, 1), Color(0, 0, 0, 1), Color(0, 0.311511, 0.578767, 1), Color(0, 0.462745, 0.94902, 1), Color(0.603922, 0.780392, 0.972549, 1), Color(0.7, 0.7, 0.7, 1), Color(0.55, 0.539, 0.385, 1), Color(0.690932, 0.466099, 0.317225, 1), Color(0.189657, 1.92523e-07, 0.918842, 1), Color(0.0136261, 1.20327e-08, 0.186441, 1)]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -209,10 +228,10 @@ tracks/6/path = NodePath("WorldEnvironment:environment:sky:sky_material:sky_hori
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 12, 24),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 2, 6, 7, 8, 12, 17, 18.75, 20, 24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 0.435275, 1),
 "update": 0,
-"values": [Color(0.23, 0.23, 0.23, 1), Color(0.678944, 0.678944, 0.678944, 1), Color(0.23, 0.23, 0.23, 1)]
+"values": [Color(0.0500861, 3.82662e-05, 0.185773, 1), Color(0.0500861, 3.827e-05, 0.185773, 1), Color(0.627885, 0.611399, 0.671316, 1), Color(0.67, 0.67, 0.67, 1), Color(0.539357, 0.59267, 0.717623, 1), Color(0.719861, 0.880636, 1, 1), Color(0.581033, 0.581033, 0.581033, 1), Color(0.64, 0.41344, 0.2624, 1), Color(0.416313, 0.3619, 0.77, 1), Color(0.0500861, 3.82662e-05, 0.185773, 1)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -221,10 +240,10 @@ tracks/7/path = NodePath("WorldEnvironment:environment:sky:sky_material:ground_b
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 12, 24),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 2, 7.2, 12, 14.5333, 17.9333, 24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(0.1247, 0.117, 0.15, 1), Color(0.22446, 0.2106, 0.27, 1), Color(0.1247, 0.117, 0.15, 1)]
+"values": [Color(0.1247, 0.117, 0.15, 1), Color(0.1247, 0.117, 0.15, 1), Color(0.22446, 0.2106, 0.27, 1), Color(0.232, 0.2304, 0.24, 1), Color(0.232, 0.2304, 0.24, 1), Color(0.232375, 0.2275, 0.25, 1), Color(0.1247, 0.117, 0.15, 1)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
@@ -233,10 +252,22 @@ tracks/8/path = NodePath("WorldEnvironment:environment:sky:sky_material:ground_h
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 12, 24),
+"times": PackedFloat32Array(0, 2, 6.10574, 8, 12, 17, 18, 19, 24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.0823529, 0.0823529, 0.0823529, 1), Color(0, 0, 0, 1), Color(0.3366, 0.34, 0.3196, 1), Color(0.392503, 0.401613, 0.415994, 1), Color(0.6463, 0.6558, 0.6708, 1), Color(0.34, 0.329573, 0.3128, 1), Color(0.51, 0.19992, 0.0204, 1), Color(0.34, 0.34, 0.34, 1), Color(0.0807833, 0.0807833, 0.0807833, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Moon:light_energy")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(2, 8, 18),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(0.2112, 0.214573, 0.22, 1), Color(0.6463, 0.6558, 0.6708, 1), Color(0.2112, 0.214573, 0.22, 1)]
+"values": [2.0, 0.25, 0.25]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_p73tq"]
@@ -247,22 +278,26 @@ _data = {
 
 [node name="DayNightLights" type="Node3D"]
 script = ExtResource("1_p73tq")
+hours_per_second = 1.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_d2llb")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-3.61999e-06, -1, 3.61999e-06, 0, -3.61999e-06, -1, 1, -3.61999e-06, 1.31043e-11, 0, 0, 0)
 light_color = Color(1, 1, 0.866667, 1)
+light_angular_distance = 0.5
 shadow_enabled = true
 shadow_reverse_cull_face = true
 
 [node name="Moon" type="DirectionalLight3D" parent="."]
 transform = Transform3D(6.15517e-06, -1, 3.61999e-06, -9.17733e-12, 3.61999e-06, 1, -1, -6.15517e-06, 1.31043e-11, 0, 0, 0)
 light_color = Color(0.3472, 0.392667, 0.62, 1)
-light_energy = 0.5
+light_energy = 2.0
+light_angular_distance = 0.5
 shadow_enabled = true
 shadow_reverse_cull_face = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_d2llb")
+sky_mode = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

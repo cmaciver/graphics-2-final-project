@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://de4ilx73lu6b7"]
+[gd_scene load_steps=5 format=3 uid="uid://de4ilx73lu6b7"]
 
 [ext_resource type="Shader" uid="uid://b6g4xkeua15pg" path="res://Shaders/canvas_ramp_shader.gdshader" id="1_bj4fq"]
+[ext_resource type="Shader" uid="uid://cus8f635dm6k7" path="res://Shaders/blur.gdshader" id="2_m1wgo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ieeo0"]
 shader = ExtResource("1_bj4fq")
@@ -8,12 +9,17 @@ shader_parameter/ramp_1 = Vector4(0, 0.35, 0.3, 0.35)
 shader_parameter/ramp_2 = Vector4(0.3, 0.45, 0.37, 0.45)
 shader_parameter/ramp_3 = Vector4(0.45, 0.65, 0.5, 0.65)
 shader_parameter/ramp_4 = Vector4(0.65, 0.8, 0.7, 0.8)
-shader_parameter/ramp_5 = Vector4(0.8, 0.9, 0.85, 0.9)
+shader_parameter/ramp_5 = Vector4(0.8, 1, 0.85, 1)
 shader_parameter/ramp_6 = Vector4(0.9, 1, 0.95, 0.97)
 
-[node name="PostProcessColorRamp" type="CanvasLayer"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bh6fh"]
+shader = ExtResource("2_m1wgo")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Node" type="Node"]
+
+[node name="PostProcessColorRamp" type="CanvasLayer" parent="."]
+
+[node name="Ramp" type="ColorRect" parent="PostProcessColorRamp"]
 z_index = 10
 material = SubResource("ShaderMaterial_ieeo0")
 anchors_preset = 15
@@ -22,3 +28,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
+
+[node name="Blur" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="TheBlur" type="ColorRect" parent="Blur"]
+material = SubResource("ShaderMaterial_bh6fh")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

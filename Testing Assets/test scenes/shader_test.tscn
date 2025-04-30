@@ -38,8 +38,10 @@ position = Vector2(1549, 726)
 scale = Vector2(0.724777, 0.646766)
 texture = ExtResource("3_uxsy1")
 
-[node name="CanvasLayer" parent="." instance=ExtResource("4_tyq1g")]
-
 [node name="RainbowSplash" type="Sprite2D" parent="."]
 position = Vector2(1678, 213)
 texture = ExtResource("5_uxsy1")
+
+[node name="Node" parent="." instance=ExtResource("4_tyq1g")]
+
+[editable path="Node"]
