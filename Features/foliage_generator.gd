@@ -37,6 +37,9 @@ var rng = RandomNumberGenerator.new()
 ]
 
 
+var initialized = false
+
+
 func init_foliage():
 	rng.seed = Time.get_ticks_usec()
 	terrain = get_parent().find_child("*TerrainGenerator*")
@@ -49,10 +52,16 @@ func init_foliage():
 		print("uhoh, no terrain")
 		return
 	
+	initialized = true
 	scatter_foliage()
 
 
 func scatter_foliage():
+	if !initialized:
+		init_foliage()
+		return
+	
+	
 	for child in get_children():
 		child.queue_free()
 	
