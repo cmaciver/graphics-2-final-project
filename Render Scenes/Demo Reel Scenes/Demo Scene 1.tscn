@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://sy8trmb80f07"]
+[gd_scene load_steps=11 format=3 uid="uid://cxhrm6ixteiev"]
 
 [ext_resource type="PackedScene" uid="uid://g6x0mpgwt84" path="res://Features/water_plane.tscn" id="1_jf1au"]
 [ext_resource type="Shader" uid="uid://kheler7rwmbf" path="res://Shaders/flat_water.gdshader" id="2_6syau"]
