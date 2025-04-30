@@ -7,6 +7,7 @@ class_name FoliageGenerator
 @export_tool_button("Generate Foliage") var generate_button = scatter_foliage
 
 var terrain : TerrainGenerator
+var water_level := -99999.9
 var rng = RandomNumberGenerator.new()
 
 @onready var trees : Array[PackedScene] = [
@@ -39,6 +40,10 @@ var rng = RandomNumberGenerator.new()
 func init_foliage():
 	rng.seed = Time.get_ticks_usec()
 	terrain = get_parent().find_child("*TerrainGenerator*")
+	var water = get_parent().find_child("*PlaneWater*")
+	if water:
+		print("inited")
+		water_level = water.position.y
 	
 	if not terrain:
 		print("uhoh, no terrain")
@@ -51,35 +56,45 @@ func scatter_foliage():
 	for child in get_children():
 		child.queue_free()
 	
-	for i in range(foliage_subdivisions):
-		for j in range(foliage_subdivisions):
+	
+	for i in range(foliage_subdivisions * terrain.edge_chunks):
+		for j in range(foliage_subdivisions * terrain.edge_chunks):
 			var rand = rng.randf()
 			var pos = select_random_point(i, j)
+			
+			
+			if pos.y < water_level: #rock only
+				var new_foliage = create_object(rocks)
+				new_foliage.position = pos
+				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+				continue
 			
 			# chance to skip entirely
 			if rand < 0.6:
 				continue
 			
-			elif rand < 0.7:
-				pass # tree
-				
-			elif rand < 0.85:
-				pass # rock
-				
-			elif rand < 1.0:
-				pass # bush
+			elif rand < 0.7: # tree
+				var new_foliage = create_object(trees)
+				new_foliage.position = pos
 			
-			
-			var new_foliage = create_object(trees)
-			
-			# place the foliage in the world, then select the type
-			new_foliage.position = pos
-			
+				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
 
-			# and rotate IN RADIANS
-			new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
-			new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
-			new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+				
+			elif rand < 1.0: # bush
+				var new_foliage = create_object(bushes)
+				new_foliage.position = pos
+			
+				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+
+			
+			
+			
 
 
 ## select the foliage type and place it in the world
@@ -95,11 +110,11 @@ func create_object(scene_array: Array[PackedScene]):
 
 
 func select_random_point(cell_x, cell_z):
-	var width = terrain.size.x / foliage_subdivisions
-	var length = terrain.size.z / foliage_subdivisions
+	var width = terrain.size.x / foliage_subdivisions / terrain.edge_chunks
+	var length = terrain.size.z / foliage_subdivisions / terrain.edge_chunks 
 	
 	var x = cell_x * width + rng.randf_range(0, width) - terrain.size.x / 2
 	var z = cell_z * length + rng.randf_range(0, length) - terrain.size.z / 2
-	var y = terrain.heightmap(x, z) - randf_range(0.1, 0.7) # maybe make this a variable later?
+	var y = terrain.heightmap(x, z)
 	
 	return Vector3(x, y, z)
