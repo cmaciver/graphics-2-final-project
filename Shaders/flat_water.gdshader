@@ -104,6 +104,7 @@ void fragment() {
 
 	ALBEDO = final_color + (0.2 * fresnel);
 	ROUGHNESS = roughness * (1.0 - fresnel);
+	METALLIC = 0.0;
 	NORMAL_MAP = normal_map;
 }
 

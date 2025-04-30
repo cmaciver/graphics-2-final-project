@@ -9,7 +9,7 @@ shader = ExtResource("1_cp5md")
 shader_parameter/Wind_Direction = Vector2(1, 1)
 shader_parameter/Wind_Speed = 0.15
 shader_parameter/Wind_Strength = 0.2
-shader_parameter/ColorParameter = Color(1, 1, 1, 1)
+shader_parameter/ColorParameter = Color(0.454198, 0.65679, 0.21305, 1)
 shader_parameter/Leaf_Texture = ExtResource("2_8sdq8")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_upafu"]
