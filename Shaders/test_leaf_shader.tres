@@ -214,7 +214,6 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-62.0123, 49.735)
 flags/depth_prepass_alpha = true
 preview_params/Wind_Speed = "0.15"
 nodes/vertex/0/position = Vector2(3220, 1620)

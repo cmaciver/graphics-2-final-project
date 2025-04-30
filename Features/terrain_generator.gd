@@ -68,6 +68,8 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 	set(value):
 		height_c = value
 		touch_noise()
+		
+@export var yeah: Curve
 
 
 @export_group("LOD")
@@ -92,6 +94,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			if Engine.is_editor_hint():
 				update_material()
 
+var bad_apple = Image.load_from_file("res://Textures/Bad_Apple.png")
 
 var height_noise_a := FastNoiseLite.new()
 var height_noise_b := FastNoiseLite.new()
@@ -114,11 +117,16 @@ func update_size() -> void:
 
 
 func heightmap(x: float, z: float) -> float:
+	var scaled_x = (x / size.x) * 512
+	var scaled_y = (z / size.z) * 512
+	var pixel_color = bad_apple.get_pixel(scaled_x, scaled_y)
+	var pixel_value = yeah.sample(pixel_color.r * (1/3) + pixel_color.g * (1/3) + pixel_color.b * (1/3)) * 22 - 10
+	
 	return (
 		height_noise_a.get_noise_2d(x * density_a, z * density_a) * height_a +
 		height_noise_b.get_noise_2d(x * density_b, z * density_b) * height_b +
 		height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
-	) * size.y # / (height_a + height_b + height_c)
+	) * size.y * pixel_value # / (height_a + height_b + height_c)
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
