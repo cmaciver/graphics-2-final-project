@@ -40,7 +40,7 @@ var rng = RandomNumberGenerator.new()
 func init_foliage():
 	rng.seed = Time.get_ticks_usec()
 	terrain = get_parent().find_child("*TerrainGenerator*")
-	var water = get_parent().find_child("*PlaneWater*")
+	var water = get_parent().find_child("*WaterPlane*")
 	if water:
 		print("inited")
 		water_level = water.position.y
