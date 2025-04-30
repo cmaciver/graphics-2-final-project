@@ -8,9 +8,10 @@ var angle = 0
 @export var RADIUS : float = 7.0
 @export var Y : float = 5.0
 
+
 func _process(delta : float) -> void:
 	angle += delta * SPEED
 	
 	camera.position = (RADIUS*Vector3.RIGHT + Vector3.UP*Y).rotated(Vector3.UP, angle)
-	camera.look_at(Vector3.ZERO)
+	camera.look_at(position)
 	
