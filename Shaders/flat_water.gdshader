@@ -55,7 +55,7 @@ void fragment() {
 	vec2 uv_movement = normalize(movement_direction) * TIME * movement_strength / plane_size;
 
 	vec3 normal_map_component_a = texture(normal_map_a, uv + uv_movement).rgb * normal_map_a_strength;
-	vec3 normal_map_component_b = texture(normal_map_b, uv + uv_movement * 0.5).rgb * normal_map_b_strength;
+	vec3 normal_map_component_b = texture(normal_map_b, uv - uv_movement * 0.5).rgb * normal_map_b_strength;
 	vec3 normal_map = normal_map_component_a + normal_map_component_b;
 	//vec3 normal_map = normal_map_vary;
 
