@@ -18,7 +18,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			update_size()
 
 
-@export_range(1, 20) var edge_chunks := 1 :
+@export_range(1, 100) var edge_chunks := 1 :
 	set(value):
 		if edge_chunks != value:
 			edge_chunks = value
@@ -28,7 +28,16 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Random")
 
 
-@export var seed := 0
+@export var seed := 0 :
+	set(value):
+		seed = value
+		height_noise_a.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+		height_noise_a.set_seed(seed)
+		height_noise_b.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+		height_noise_b.set_seed(seed + 1)
+		height_noise_c.set_noise_type(FastNoiseLite.TYPE_PERLIN)
+		height_noise_c.set_seed(seed + 2)
+		
 @export_tool_button("Randomize Seed", "Loop") var randomize = randomize_seed
 
 
@@ -168,13 +177,6 @@ func randomize_seed() -> void:
 func generate_mesh() -> void:
 	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
-	
-	height_noise_a.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_a.set_seed(seed)
-	height_noise_b.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_b.set_seed(seed + 1)
-	height_noise_c.set_noise_type(FastNoiseLite.TYPE_PERLIN)
-	height_noise_c.set_seed(seed + 2)
 	
 	var children = get_children()
 	for child in children:
