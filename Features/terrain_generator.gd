@@ -235,11 +235,25 @@ func generate_mesh() -> void:
 		
 		patch.generate_mesh()
 	
+	# update foliage spread area and water size if shape is new
 	if shape_changed:
 		shape_changed = false
 		var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
 		if foliage:
 			foliage.init_foliage()
+			
+		var water = get_parent().find_child("*WaterPlane*")
+		if water:
+			water.mesh.size = edge_chunks * Vector2(chunk_size.x, chunk_size.z)
+			var normal_A = water.mesh.material.get_shader_parameter("normal_map_a") 
+			normal_A.width = edge_chunks * 200
+			normal_A.height = edge_chunks * 200
+			water.mesh.material.set_shader_parameter("normal_map_a", normal_A)
+			
+			var normal_B = water.mesh.material.get_shader_parameter("normal_map_b") 
+			normal_B.width = edge_chunks * 200
+			normal_B.height = edge_chunks * 200
+			water.mesh.material.set_shader_parameter("normal_map_b", normal_B)
 	
 	var duration := Time.get_unix_time_from_system() - start_time;
 	print("Completed terrain generation in ", "%0.3f" % duration, " seconds.\n\n")
