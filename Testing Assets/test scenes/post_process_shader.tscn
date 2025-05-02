@@ -15,11 +15,11 @@ shader_parameter/ramp_6 = Vector4(0.9, 1, 0.95, 0.97)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bh6fh"]
 shader = ExtResource("2_m1wgo")
 
-[node name="Node" type="Node"]
+[node name="PostProcess" type="Node"]
 
-[node name="PostProcessColorRamp" type="CanvasLayer" parent="."]
+[node name="ColorRamp" type="CanvasLayer" parent="."]
 
-[node name="Ramp" type="ColorRect" parent="PostProcessColorRamp"]
+[node name="Ramp" type="ColorRect" parent="ColorRamp"]
 z_index = 10
 material = SubResource("ShaderMaterial_ieeo0")
 anchors_preset = 15
