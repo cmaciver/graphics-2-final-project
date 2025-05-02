@@ -74,7 +74,7 @@ func scatter_foliage():
 			
 			if pos.y < water_level: #rock only
 				var new_foliage = create_object(rocks)
-				new_foliage.position = pos
+				new_foliage.position = pos + rng.randf_range(0, 1) * Vector3.DOWN
 				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
 				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
 				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
