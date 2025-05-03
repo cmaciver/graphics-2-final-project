@@ -5,8 +5,22 @@ class_name TerrainGenerator
 enum DetailMode {HIGH, MEDIUM, LOW, DISTANCE}
 enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 
+@export_tool_button("Play", "MainPlay") var play_apple = start
+func start():
+	$"../AnimationPlayer".play("frame ticker")
+
+
 @export_tool_button("Generate Terrain", "MainPlay") var generate_button = generate_mesh
 
+var current_frame = Image.load_from_file("res://Textures/bad apple frames/bad apple video_000001.png")
+@export_range(1, 6572, 1) var frame_number := 1.0 :
+	set(value):
+		frame_number = floor(value)
+		current_frame = Image.load_from_file(
+			"res://Textures/bad apple frames/bad apple video_%06d.png" % frame_number
+		)
+		#randomize_seed()
+		generate_mesh() # TODO make noise more continuous
 
 @export_group("Chunks")
 
@@ -94,7 +108,6 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			if Engine.is_editor_hint():
 				update_material()
 
-var bad_apple = Image.load_from_file("res://Textures/Bad Apple/bad_apple_355.png")
 
 var height_noise_a := FastNoiseLite.new()
 var height_noise_b := FastNoiseLite.new()
@@ -117,17 +130,17 @@ func update_size() -> void:
 
 
 func heightmap(x: float, z: float) -> float:
-	var scaled_x = (x+size.x/2) / size.x * 1440
-	var scaled_y = (z+size.z/2) / size.z * 1080
-	scaled_x = clamp(scaled_x, 0, 1439)
-	scaled_y = clamp(scaled_y, 0, 1079)
-	var pixel_color = bad_apple.get_pixel(scaled_x, scaled_y)
+	var scaled_x = (x+size.x/2) / size.x * current_frame.get_width()
+	var scaled_y = (z+size.z/2) / size.z * current_frame.get_height()
+	scaled_x = clamp(scaled_x, 0, current_frame.get_width() - 1)
+	scaled_y = clamp(scaled_y, 0, current_frame.get_height() - 1)
 	
+	var pixel_color = current_frame.get_pixel(scaled_x, scaled_y)
 	var curve_point = color_curve.sample(pixel_color.r)
 	
-	var noise_a = height_noise_a.get_noise_2d(x * density_a, z * density_a) * height_a
-	var noise_b = height_noise_b.get_noise_2d(x * density_b, z * density_b) * height_b
-	var noise_c = height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
+	var noise_a = height_noise_a.get_noise_3d(x * density_a, z * density_a, frame_number) * height_a
+	var noise_b = height_noise_b.get_noise_3d(x * density_b, z * density_b, frame_number) * height_b
+	var noise_c = height_noise_c.get_noise_3d(x * density_c, z * density_c, frame_number) * height_c
 	var noise = noise_a + noise_b + noise_c
 	
 	return curve_point * (noise * tanh(noise * 1.07) + 1)
@@ -190,12 +203,15 @@ func generate_mesh() -> void:
 	print("Started generating terrain...\n")
 	var start_time := Time.get_unix_time_from_system()
 	
+	# kill children
 	var children = get_children()
 	for child in children:
 		child.queue_free()
 	
 	var initial_position = Vector3(chunk_size.x, 0, chunk_size.z) * (edge_chunks - 1) * -0.5
 	
+	
+	# do stuff per patch
 	patches = []
 	for z in edge_chunks:
 		patches.append([])
