@@ -130,7 +130,7 @@ func heightmap(x: float, z: float) -> float:
 	var noise_c = height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
 	var noise = noise_a + noise_b + noise_c
 	
-	return curve_point * (noise + height_a + height_b + height_c)
+	return curve_point * (noise * tanh(noise * 1.07) + 1)
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
