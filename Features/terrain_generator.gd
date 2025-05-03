@@ -44,27 +44,27 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Noise")
 
 
-#@export_range(0.1, 20, 0.1) var density_a := 2.0 :
-	#set(value):
-		#density_a = value
-		#touch_noise()
-#@export_range(0.1, 50, 0.1) var height_a := 35.0 :
-	#set(value):
-		#height_a = value
-		#touch_noise()
-#@export_range(0.1, 20, 0.1) var density_b := 10.0 :
-	#set(value):
-		#density_b = value
-		#touch_noise()
-#@export_range(0.1, 50, 0.1) var height_b := 5.0 :
-	#set(value):
-		#height_b = value
-		#touch_noise()
+@export_range(0.1, 20, 0.1) var density_a := 2.0 :
+	set(value):
+		density_a = value
+		touch_noise()
+@export_range(0, 50, 0.1) var height_a := 35.0 :
+	set(value):
+		height_a = value
+		touch_noise()
+@export_range(0.1, 20, 0.1) var density_b := 10.0 :
+	set(value):
+		density_b = value
+		touch_noise()
+@export_range(0, 50, 0.1) var height_b := 5.0 :
+	set(value):
+		height_b = value
+		touch_noise()
 @export_range(0.1, 20, 0.1) var density_c := 15.0 :
 	set(value):
 		density_c = value
 		touch_noise()
-@export_range(0.1, 50, 0.1) var height_c := 2.0 :
+@export_range(0, 50, 0.1) var height_c := 2.0 :
 	set(value):
 		height_c = value
 		touch_noise()
@@ -125,8 +125,12 @@ func heightmap(x: float, z: float) -> float:
 	
 	var curve_point = color_curve.sample(pixel_color.r)
 	
+	var noise_a = height_noise_a.get_noise_2d(x * density_a, z * density_a) * height_a
+	var noise_b = height_noise_b.get_noise_2d(x * density_b, z * density_b) * height_b
 	var noise_c = height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
-	return (2*curve_point-1) * (noise_c - -height_c)
+	var noise = noise_a + noise_b + noise_c
+	
+	return curve_point * (noise + height_a + height_b + height_c)
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
