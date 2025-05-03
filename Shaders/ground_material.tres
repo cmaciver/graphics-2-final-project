@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://ejhu02ddu78a"]
+
+[ext_resource type="Shader" uid="uid://c5ljpapit0eno" path="res://Shaders/ground_shader.gdshader" id="1_u0712"]
+[ext_resource type="Texture2D" uid="uid://bpyuqp8n0p6yt" path="res://Textures/Ground/Grass/Grass_Normal.png" id="2_xbkr8"]
+[ext_resource type="Texture2D" uid="uid://cefmxt22jik1p" path="res://Textures/Ground/Grass/Grass_Albedo.png" id="3_8deay"]
+[ext_resource type="Texture2D" uid="uid://caofaveruk8v3" path="res://Textures/Ground/Rock/Rock_Normal.png" id="4_umyy8"]
+[ext_resource type="Texture2D" uid="uid://8no6befcnghv" path="res://Textures/Ground/Rock/Rock_Albedo.png" id="5_eue8l"]
+[ext_resource type="Texture2D" uid="uid://d256bykam8qrg" path="res://Textures/Ground/Sand/Sand_Normal.png" id="6_uo886"]
+[ext_resource type="Texture2D" uid="uid://cxo8mn86pmndt" path="res://Textures/Ground/Sand/Sand_Albedo.png" id="7_lvwyj"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_u0712")
+shader_parameter/grass_texture = ExtResource("3_8deay")
+shader_parameter/rock_texture = ExtResource("5_eue8l")
+shader_parameter/sand_texture = ExtResource("7_lvwyj")
+shader_parameter/grass_normalmap = ExtResource("2_xbkr8")
+shader_parameter/rock_normalmap = ExtResource("4_umyy8")
+shader_parameter/sand_normalmap = ExtResource("6_uo886")
+shader_parameter/min_rock_slope = 0.5
+shader_parameter/max_grass_slope = 0.9
+shader_parameter/min_rockgrass_height = 0.5
+shader_parameter/max_sand_height = 1.0

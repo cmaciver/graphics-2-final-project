@@ -34,7 +34,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_d41u4")
 
-[node name="Rock3" type="Node3D"]
+[node name="Rock3" type="Node3D" groups=["foliage"]]
 
 [node name="Rock_Small_01" type="Node3D" parent="."]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)

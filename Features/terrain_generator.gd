@@ -44,22 +44,22 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 @export_group("Noise")
 
 
-@export_range(0.1, 20, 0.1) var density_a := 2.0 :
-	set(value):
-		density_a = value
-		touch_noise()
-@export_range(0.1, 50, 0.1) var height_a := 35.0 :
-	set(value):
-		height_a = value
-		touch_noise()
-@export_range(0.1, 20, 0.1) var density_b := 10.0 :
-	set(value):
-		density_b = value
-		touch_noise()
-@export_range(0.1, 50, 0.1) var height_b := 5.0 :
-	set(value):
-		height_b = value
-		touch_noise()
+#@export_range(0.1, 20, 0.1) var density_a := 2.0 :
+	#set(value):
+		#density_a = value
+		#touch_noise()
+#@export_range(0.1, 50, 0.1) var height_a := 35.0 :
+	#set(value):
+		#height_a = value
+		#touch_noise()
+#@export_range(0.1, 20, 0.1) var density_b := 10.0 :
+	#set(value):
+		#density_b = value
+		#touch_noise()
+#@export_range(0.1, 50, 0.1) var height_b := 5.0 :
+	#set(value):
+		#height_b = value
+		#touch_noise()
 @export_range(0.1, 20, 0.1) var density_c := 15.0 :
 	set(value):
 		density_c = value
@@ -69,7 +69,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 		height_c = value
 		touch_noise()
 		
-@export var yeah: Curve
+@export var color_curve: Curve
 
 
 @export_group("LOD")
@@ -94,7 +94,7 @@ enum DiagonalType {SIMPLE, ALTERNATING, SMOOTHING}
 			if Engine.is_editor_hint():
 				update_material()
 
-var bad_apple = Image.load_from_file("res://Textures/Bad_Apple.png")
+var bad_apple = Image.load_from_file("res://Textures/Bad Apple/bad_apple_355.png")
 
 var height_noise_a := FastNoiseLite.new()
 var height_noise_b := FastNoiseLite.new()
@@ -117,16 +117,16 @@ func update_size() -> void:
 
 
 func heightmap(x: float, z: float) -> float:
-	var scaled_x = (x / size.x) * 512
-	var scaled_y = (z / size.z) * 512
+	var scaled_x = (x+size.x/2) / size.x * 1440
+	var scaled_y = (z+size.z/2) / size.z * 1080
+	scaled_x = clamp(scaled_x, 0, 1439)
+	scaled_y = clamp(scaled_y, 0, 1079)
 	var pixel_color = bad_apple.get_pixel(scaled_x, scaled_y)
-	var pixel_value = yeah.sample(pixel_color.r * (1/3) + pixel_color.g * (1/3) + pixel_color.b * (1/3)) * 22 - 10
 	
-	return (
-		height_noise_a.get_noise_2d(x * density_a, z * density_a) * height_a +
-		height_noise_b.get_noise_2d(x * density_b, z * density_b) * height_b +
-		height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
-	) * size.y * pixel_value # / (height_a + height_b + height_c)
+	var curve_point = color_curve.sample(pixel_color.r)
+	
+	var noise_c = height_noise_c.get_noise_2d(x * density_c, z * density_c) * height_c
+	return (2*curve_point-1) * (noise_c - -height_c)
 
 
 func pos_from_map(x: float, z:float) -> Vector3:
@@ -235,13 +235,14 @@ func generate_mesh() -> void:
 		
 		patch.generate_mesh()
 	
-	# update foliage spread area and water size if shape is new
+	
+	var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
+	if foliage:
+		foliage.init_foliage()
+			
+	# update water size if shape is new
 	if shape_changed:
 		shape_changed = false
-		var foliage : FoliageGenerator = get_parent().find_child("*FoliageGenerator*")
-		if foliage:
-			foliage.init_foliage()
-			
 		var water = get_parent().find_child("*WaterPlane*")
 		if water:
 			water.mesh.size = edge_chunks * Vector2(chunk_size.x, chunk_size.z)

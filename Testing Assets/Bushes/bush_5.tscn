@@ -42,7 +42,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_6u1pk")
 
-[node name="Bush5" type="Node3D"]
+[node name="Bush5" type="Node3D" groups=["foliage"]]
 
 [node name="Bush_03_01" type="Node3D" parent="."]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)

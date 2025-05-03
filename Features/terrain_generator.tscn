@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://cewqwmowu52ym"]
+[gd_scene load_steps=3 format=3 uid="uid://cewqwmowu52ym"]
 
 [ext_resource type="Script" uid="uid://coycwuu5yfcwe" path="res://Features/terrain_generator.gd" id="1_vvy3h"]
 
+[sub_resource type="Curve" id="Curve_vvy3h"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.503896, 0.503018), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
 [node name="TerrainGenerator" type="Node3D"]
 script = ExtResource("1_vvy3h")
+color_curve = SubResource("Curve_vvy3h")

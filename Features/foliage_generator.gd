@@ -36,6 +36,8 @@ var rng = RandomNumberGenerator.new()
 	preload("res://Testing Assets/Rocks/rock_6.tscn"),
 ]
 
+@onready var abe : Array[PackedScene] = [preload("res://Testing Assets/etc/abe.tscn")]
+
 
 var initialized = false
 
@@ -61,69 +63,78 @@ func scatter_foliage():
 		init_foliage()
 		return
 	
+	get_tree().call_group("foliage", "queue_free")
 	
-	for child in get_children():
-		child.queue_free()
-	
-	
-	for i in range(foliage_subdivisions * terrain.edge_chunks):
-		for j in range(foliage_subdivisions * terrain.edge_chunks):
-			var rand = rng.randf()
-			var pos = select_random_point(i, j)
-			
-			
-			if pos.y < water_level: #rock only
-				var new_foliage = create_object(rocks)
-				new_foliage.position = pos + rng.randf_range(0, 1) * Vector3.DOWN
-				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
-				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
-				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
-				continue
-			
-			# chance to skip entirely
-			if rand < 0.6:
-				continue
-			
-			elif rand < 0.7: # tree
-				var new_foliage = create_object(trees)
-				new_foliage.position = pos
-			
-				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
-				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
-				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
-
+	for p in range(terrain.get_children().size()):
+		var patch = terrain.get_child(p)
+		for i in range(foliage_subdivisions):
+			for j in range(foliage_subdivisions):
+				place_foliage(patch, i, j)
 				
-			elif rand < 1.0: # bush
-				var new_foliage = create_object(bushes)
-				new_foliage.position = pos
-			
-				new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
-				new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
-				new_foliage.rotation.z = rng.randf_range(0, PI / 12)
 
-			
-			
-			
+func place_foliage(patch, i, j):
+	var rand = rng.randf()
+	var pos = select_random_point(patch, i, j)
+	
+	
+	if pos.y < water_level:
+		if rand < 0.5: #rock only
+			return
+		
+		var new_foliage = create_object(patch, pos, rocks)
+		new_foliage.position += rng.randf_range(0, 1) * Vector3.DOWN
+		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+		new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+		new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+		return
+	
+	# chance to skip entirely
+	if rand < 0.6:
+		return
+	
+	elif rand < 0.7: # tree
+		var new_foliage = create_object(patch, pos, trees)
+		new_foliage.position += rng.randf_range(0.5, 1) * Vector3.DOWN
+	
+		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+		new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+		new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+
+		
+	elif rand < 0.999: # bush
+		var new_foliage = create_object(patch, pos, bushes)
+	
+		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
+		new_foliage.rotation.x = rng.randf_range(0, PI / 12) # 1/24 of a circle
+		new_foliage.rotation.z = rng.randf_range(0, PI / 12)
+		
+	else:
+		var new_foliage = create_object(patch, pos, abe)
+		new_foliage.position += Vector3.UP
+
+		new_foliage.rotation.y = rng.randf_range(0, 2 * PI)
 
 
 ## select the foliage type and place it in the world
-func create_object(scene_array: Array[PackedScene]):
+func create_object(patch, cell_pos, scene_array: Array[PackedScene]):
 	var type = scene_array.pick_random()
 	var new_foliage = type.instantiate()
 	
-	add_child(new_foliage)
+	patch.add_child(new_foliage)
+	new_foliage.position = cell_pos
 	if Engine.is_editor_hint():
 		new_foliage.set_owner(get_tree().get_edited_scene_root())
 	
 	return new_foliage
 
 
-func select_random_point(cell_x, cell_z):
-	var width = terrain.size.x / foliage_subdivisions / terrain.edge_chunks
-	var length = terrain.size.z / foliage_subdivisions / terrain.edge_chunks 
+# selects within A SINGLE CHUNK!!
+func select_random_point(patch, cell_x, cell_z):
+	var width = terrain.chunk_size.x / foliage_subdivisions
+	var length = terrain.chunk_size.z / foliage_subdivisions
 	
-	var x = cell_x * width + rng.randf_range(0, width) - terrain.size.x / 2
-	var z = cell_z * length + rng.randf_range(0, length) - terrain.size.z / 2
-	var y = terrain.heightmap(x, z)
+	var x = cell_x * width + rng.randf_range(0, width) - terrain.chunk_size.x / 2
+	var z = cell_z * length + rng.randf_range(0, length) - terrain.chunk_size.z / 2
+	var y = terrain.heightmap(x + patch.position.x, z + patch.position.z)
 	
 	return Vector3(x, y, z)
